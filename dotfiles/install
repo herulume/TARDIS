@@ -1,37 +1,26 @@
 #!/bin/sh
 
-#sudo pacman -Syu
-# Use neovim nightly build
-#sudo pacman -S ed feh otf-fira-code xorg-xinput arandr cmake libtool tmux xorg-xbacklight slock fzf redshift rofi rxvt-unicode yay
-
 # Dev
 [ ! -d "$HOME/dev" ] && mkdir "$HOME/dev"
 
 # xmonad
 #[ ! -d "$HOME/.xmonad/" ] && mkdir -p "$HOME/.xmonad"
-#ln -sfT "$HOME/dev/dotfiles/xmonad/xmonad.hs" "$HOME/.xmonad/xmonad.hs"
-#ln -sfT "$HOME/dev/dotfiles/xmonad/.xmobarrc" "$HOME/.xmonad/.xmobarrc"
+#ln -sfT "$HOME/dev/TARDIS/dotfiles/xmonad/xmonad.hs" "$HOME/.xmonad/xmonad.hs"
+#ln -sfT "$HOME/dev/TARDIS/dotfiles/xmonad/.xmobarrc" "$HOME/.xmonad/.xmobarrc"
 
 # Where to save wallpapers
 [ ! -d "$HOME/Pictures/Wallpapers/" ] && mkdir -p "$HOME/Pictures/Wallpapers"
 cp "./wallpaper.jpg"                              "$HOME/Pictures/Wallpapers/"
 
 # Xdefaults
-ln -sfT "$HOME/dev/dotfiles/Xdefaults" "$HOME/.Xdefaults"
+ln -sfT "$HOME/dev/TARDIS/dotfiles/Xdefaults" "$HOME/.Xdefaults"
 
 # Bash
-ln -sfT "$HOME/dev/dotfiles/bash/bashrc"       "$HOME/.bashrc"
-ln -sfT "$HOME/dev/dotfiles/bash/bash_profile" "$HOME/.bash_profile"
+ln -sfT "$HOME/dev/TARDIS/dotfiles/bash/bashrc"       "$HOME/.bashrc"
+ln -sfT "$HOME/dev/TARDIS/dotfiles/bash/bash_profile" "$HOME/.bash_profile"
 
 # Git
-ln -sfT "$HOME/dev/dotfiles/git/gitconfig" "$HOME/.gitconfig"
-
-# Neovim
-[ ! -d "$HOME/.config/nvim" ] && mkdir -p "$HOME/.config/nvim"
-[ ! -d "$HOME/.config/nvim/undodir" ] && mkdir -p "$HOME/.config/nvim/undodir"
-ln -sfT "$HOME/dev/dotfiles/nvim/init.vim" "$HOME/.config/nvim/init.vim"
-ln -sfT "$HOME/dev/dotfiles/nvim/cocconfig.vim" "$HOME/.config/nvim/cocconfig.vim"
-ln -sfT "$HOME/dev/dotfiles/nvim/coc-settings.json" "$HOME/.config/nvim/coc-settings.json"
+ln -sfT "$HOME/dev/TARDIS/dotfiles/git/gitconfig" "$HOME/.gitconfig"
 
 # Haskell stack
 curl -sSL https://get.haskellstack.org/ | sh
