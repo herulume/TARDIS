@@ -1,0 +1,6 @@
+#!/bin/sh
+
+touch=$(xinput | grep 'TouchPad' | awk '{print $6}' | cut -d '=' -f 2-)
+tap=$(xinput list-props $touch | grep 'Tapping Enabled (' | awk -F "[()]" '{print $2}')
+
+xinput set-prop $touch $tap 1

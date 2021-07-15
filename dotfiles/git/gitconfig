@@ -1,0 +1,11 @@
+[user]
+  name = herulume
+  email = herulume@protonmail.com
+[github]
+  user = herulume
+[core]
+  editor = nvim
+  excludesfile = ~/dev/dotfiles/git/gitignore_global
+[commit]
+  verbose = true
+  template = ~/dev/dotfiles/git/git-commit-msg-template

@@ -1,0 +1,7 @@
+#!/bin/sh
+
+[ ! -d "$HOME/.local/bin/" ] && mkdir "$HOME/.local/bin"
+
+cp "./utils/"* "$HOME/.local/bin"
+
+chmod +x "$HOME/.local/bin/"*
