@@ -12,7 +12,7 @@ Make startup faster by reducing the frequency of garbage collection.
 
 #+end_src
 
-*  Welcome
+* Welcome
 
 This file generates [[file:init.el][init.el]] which can be loaded by Emacs at startup.
 
@@ -26,7 +26,7 @@ This file generates [[file:init.el][init.el]] which can be loaded by Emacs at st
 
 #+end_src
 
-*  Package System Setup
+* Package System Setup
 
 Check [[https://github.com/jwiegley/use-package][use-package]] for more information
 
@@ -75,7 +75,8 @@ I don't want a bunch of transient files showing up as untracked in the Git repo 
 
 #+end_src
 
-*  Basic UI Configuration
+
+* Basic UI Configuration
 
 Remove unneeded elements, add line and column numbers.
 
@@ -102,6 +103,7 @@ Remove unneeded elements, add line and column numbers.
                   term-mode-hook
                   shell-mode-hook
                   treemacs-mode-hook
+		    vterm-mode-hook
                   eshell-mode-hook))
     (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
@@ -123,7 +125,8 @@ I am using the [[https://github.com/tonsky/FiraCode][Fira Code]] and [[https://f
 
 #+end_src
 
-*  UI Configuration
+
+* UI Configuration
 
 ** Theme
 
@@ -226,11 +229,9 @@ Check out the [[https://github.com/seagle0128/doom-modeline#customize][configura
 
 #+end_src
 
-*  Dashboard
+* Dashboard
 
 #+begin_src emacs-lisp
-
-  (use-package page-break-lines)
 
   (use-package dashboard
     :config
@@ -250,6 +251,7 @@ Check out the [[https://github.com/seagle0128/doom-modeline#customize][configura
     (dashboard-setup-startup-hook))
 
 #+end_src
+
 * Org Mode
 
 [[https://orgmode.org/][Org Mode]] is one of the hallmark features of Emacs.  It is a rich document editor, project planner, task and time tracker, blogging engine, and literate coding utility all wrapped up in one package.
@@ -509,7 +511,8 @@ This snippet adds a hook to =org-mode= buffers so that =efs/org-babel-tangle-con
 
 #+end_src
 
-*  Email
+
+* Email
 
 ** Mu4e
 
@@ -627,6 +630,7 @@ Use libnotify to send a notifcation when a new email is sync'ed.
                                     :with-toc nil)))
 
 #+end_src
+
 
 * Development
 
@@ -786,6 +790,115 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
     (setq agda2-directory "/home/herulume/Downloads/Agda-nightly-data/emacs-mode/"))
 
 #+end_src
+
+* Terminals and Shells
+
+** vterm
+
+[[https://github.com/akermu/emacs-libvterm/][vterm]] is an improved terminal emulator package which uses a compiled native module to interact with the underlying terminal applications.  This enables it to be much faster than =term-mode= and to also provide a more complete terminal emulation experience.
+
+Make sure that you have the [[https://github.com/akermu/emacs-libvterm/#requirements][necessary dependencies]] installed before trying to use =vterm= because there is a module that will need to be compiled before you can use it successfully.
+
+#+begin_src emacs-lisp
+
+  (use-package vterm
+    :commands vterm
+    :config
+    ;(setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *")  ;; Set this to match your custom shell prompt
+    (setq vterm-shell "bash")                       ;; Set this to customize the shell to launch
+    (setq vterm-max-scrollback 10000))
+
+#+end_src
+
+* File Management
+
+** Dired
+
+Dired is a built-in file manager for Emacs that does some pretty amazing things!  Here are some key bindings you should try out:
+
+*** Key Bindings
+
+**** Navigation
+
+- =n= - next line
+- =p= - previous line
+- =j= - jump to file in buffer
+- =RET= - select file or directory
+- =^= - go to parent directory
+- =S-RET= - Open file in "other" window
+- =M-RET= - Show file in other window without focusing (previewing files)
+- =g o= (=dired-view-file=) - Open file but in a "preview" mode, close with =q=
+- =g= - Refresh the buffer with =revert-buffer= after changing configuration (and after filesystem changes!)
+
+**** Marking files
+
+- =m= - Marks a file
+- =u= - Unmarks a file
+- =U= - Unmarks all files in buffer
+- =* t= / =t= - Inverts marked files in buffer
+- =% m= - Mark files in buffer using regular expression
+- =*= - Lots of other auto-marking functions
+- =k= / =K= - "Kill" marked items (refresh buffer with =g= / =g r= to get them back)
+- Many operations can be done on a single file if there are no active marks!
+ 
+**** Copying and Renaming files
+
+- =C= - Copy marked files (or if no files are marked, the current file)
+- Copying single and multiple files
+- =U= - Unmark all files in buffer
+- =R= - Rename marked files, renaming multiple is a move!
+- =% R= - Rename based on regular expression: =^test= , =old-\&=
+
+*Power command*: =C-x C-q= (=dired-toggle-read-only=) - Makes all file names in the buffer editable directly to rename them!  Press =Z Z= to confirm renaming or =Z Q= to abort.
+
+**** Deleting files
+
+- =D= - Delete marked file
+- =d= - Mark file for deletion
+- =x= - Execute deletion for marks
+- =delete-by-moving-to-trash= - Move to trash instead of deleting permanently
+
+**** Creating and extracting archives
+
+- =Z= - Compress or uncompress a file or folder to (=.tar.gz=)
+- =c= - Compress selection to a specific file
+- =dired-compress-files-alist= - Bind compression commands to file extension
+
+**** Other common operations
+
+- =T= - Touch (change timestamp)
+- =M= - Change file mode
+- =O= - Change file owner
+- =G= - Change file group
+- =S= - Create a symbolic link to this file
+- =L= - Load an Emacs Lisp file into Emacs
+
+*** Configuration
+
+#+begin_src emacs-lisp
+
+  (use-package dired
+    :ensure nil
+    :commands (dired dired-jump)
+    :bind (("C-x C-j" . dired-jump))
+    :custom ((dired-listing-switches "-agho --group-directories-first")
+             (dired-dwim-target t)))
+
+  (use-package dired-single)
+
+  (use-package all-the-icons-dired
+    :hook (dired-mode . all-the-icons-dired-mode))
+
+  (use-package dired-open
+    :config
+    (setq dired-open-extensions '(("png" . "feh")
+                                  ("mkv" . "mpv"))))
+
+  (use-package dired-hide-dotfiles
+    :hook (dired-mode . dired-hide-dotfiles-mode))
+
+#+end_src
+
 * My Functions
 
 ** Margo
@@ -813,6 +926,7 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
 
 #+end_src
 
+
 * Testing
 
 #+begin_src emacs-lisp
@@ -823,10 +937,7 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
   (setq-default pdf-view-display-size 'fit-page)
   (setq pdf-annot-activate-created-annotations t)
   (define-key pdf-view-mode-map (kbd "C-s") 'isearch-forward)
-  (define-key pdf-view-mode-map (kbd "C-r") 'isearch-backward)
-;;  (add-hook 'pdf-view-mode-hook (lambda ()
-;;				  (bms/pdf-midnite-amber))) ; automatically turns on midnight-mode for pdfs
-  )
+  (define-key pdf-view-mode-map (kbd "C-r") 'isearch-backward))
 
 (use-package auctex-latexmk
   :config
@@ -841,9 +952,8 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
 (use-package auto-dictionary
   :init(add-hook 'flyspell-mode-hook (lambda () (auto-dictionary-mode 1))))
 
-;;(use-package company-auctex
-;;  :ensure t
-;;  :init (company-auctex-init))
+;(use-package company-auctex
+;  :init (company-auctex-init))
 
 (use-package tex
   :ensure auctex
@@ -868,3 +978,12 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
 	    ))
 
 #+end_src
+* End Config
+
+Make gc pauses faster by decreasing the threshold.
+
+#+begin_src emacs-lisp
+
+(setq gc-cons-threshold (* 2 1000 1000))
+
+ #+end_src
