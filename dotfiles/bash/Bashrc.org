@@ -1,0 +1,192 @@
+#+title: bashrc Configuration
+#+PROPERTY: header-args :shell :tangle "~/Desktop/bashrc" :mkdirp yes
+
+* Global definitions
+
+#+begin_src shell
+
+  if [ -f /etc/bashrc ]; then
+      . /etc/bashrc
+  fi
+
+#+end_src
+
+* Prompt
+
+#+begin_src shell
+
+  RESET="\[\017\]"
+  NORMAL="\[\033[0m\]"
+  RED="\[\033[31;1m\]"
+  YELLOW="\[\033[33;1m\]"
+  WHITE="\[\033[37;1m\]"
+  CYAN="\[\033[0;34m\]"
+
+  SMILEY="${WHITE}:)${NORMAL}"
+  FROWNY="${RED}:(${NORMAL}"
+
+  SELECT="if [ \$? = 0 ]; then echo \"${SMILEY}\"; else echo \"${FROWNY}\"; fi"
+
+  PS1="${RESET}${CYAN}\u@\h \W${NORMAL} \`${SELECT}\` ${YELLOW}>${NORMAL} "
+
+#+end_src
+
+* .local/bin
+
+#+begin_src shell
+
+  if ! [[ "$PATH" =~ "$HOME/.local/bin:$HOME/bin:" ]]
+  then
+      PATH="$HOME/.local/bin:$HOME/bin:$PATH"
+  fi
+
+#+end_src
+
+* Alias
+
+** Git
+
+#+begin_src shell
+
+  alias g='git'
+  alias god='git rebase -i --root'
+
+#+end_src
+
+** System commands
+
+#+begin_src shell
+
+  alias ls='ls --color=auto'
+
+  alias grep='grep --colour=auto'
+  alias egrep='egrep --colour=auto'
+  alias fgrep='fgrep --colour=auto'
+
+  alias rm='rm -i'
+  alias mv='mv -i'
+
+#+end_src
+
+*  Functions
+
+** up
+
+Go up N directories.
+
+#+begin_src shell
+
+  up() { cd $(eval printf '../'%.0s {1..$1}) && pwd; }
+
+#+end_src
+
+** cdls
+
+=cd= into a directory and =ls=.
+
+#+begin_src shell
+
+  cdls() { cd "$1"; ls;}
+
+#+end_src
+
+** ex
+
+Extract a compressed file.
+
+#+begin_src shell
+
+  ex ()
+  {
+    if [ -f $1 ] ; then
+      case $1 in
+        ,*.tar.bz2)   tar xjf $1   ;;
+        ,*.tar.gz)    tar xzf $1   ;;
+        ,*.bz2)       bunzip2 $1   ;;
+        ,*.rar)       unrar x $1   ;;
+        ,*.gz)        gunzip $1    ;;
+        ,*.tar)       tar xf $1    ;;
+        ,*.tbz2)      tar xjf $1   ;;
+        ,*.tgz)       tar xzf $1   ;;
+        ,*.zip)       unzip $1     ;;
+        ,*.Z)         uncompress $1;;
+        ,*.7z)        7z x $1      ;;
+        ,*.deb)       ar x $1      ;;
+        ,*.tar.xz)    tar xf $1    ;;
+        ,*.tar.zst)   unzstd $1    ;;
+        ,*)           echo "'$1' cannot be extracted via ex()" ;;
+      esac
+    else
+      echo "'$1' is not a valid file"
+    fi
+  }
+
+#+end_src
+
+** runInOwnNameSpace
+
+Run command in own namespace
+
+#+begin_src shell
+
+  runInOwnNamespace() {
+      unshare -c --fork --pid --mount-proc "$1"
+  }
+
+#+end_src
+
+* Languages
+
+** Go
+
+#+begin_src shell
+
+  GOPATH="$HOME/go"
+  GOBIN="$HOME/go/bin"
+  PATH="$HOME/go/bin:$PATH"
+
+#+end_src
+
+** Java 8
+
+#+begin_src shell
+
+  JAVA_HOME="/usr/lib/jvm/java-8-openjdk"
+
+#+end_src
+
+** Agda
+
+#+begin_src shell
+
+  export Agda_datadir=/home/herulume/Downloads/Agda-nightly/data
+  PATH=/home/herulume/Downloads/Agda-nightly/bin:${PATH}
+
+#+end_src
+
+** Rust
+
+#+begin_src shell
+
+  if [ -d "$HOME/.cargo/" ]; then
+      source "$HOME/.cargo/env"
+  fi
+
+#+end_src
+* ASDF
+
+#+begin_src shell
+
+  if [ -d "$HOME/.asdf/" ]; then
+      . $HOME/.asdf/asdf.sh
+      . $HOME/.asdf/completions/asdf.bash
+  fi
+
+#+end_src
+*  Export PATH
+
+#+begin_src shell
+
+  export PATH
+
+#+end_src
