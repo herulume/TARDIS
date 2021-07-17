@@ -1,0 +1,12 @@
+#+title: bash_profile Configuration
+#+PROPERTY: header-args :shell :tangle ./bash_profile :mkdirp yes
+
+* Get the aliases and functions
+
+#+begin_src shell
+
+  if [ -f ~/.bashrc ]; then
+      . ~/.bashrc
+  fi
+
+#+end_src

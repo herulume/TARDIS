@@ -1,70 +1,41 @@
-# .bashrc
-
-# Source global definitions
 if [ -f /etc/bashrc ]; then
     . /etc/bashrc
 fi
 
-# User specific environment
-if ! [[ "$PATH" =~ "$HOME/.local/bin:$HOME/bin:" ]]
-then
-    PATH="$HOME/.local/bin:$HOME/bin:$PATH"
-fi
-
-GOPATH="$HOME/go"
-GOBIN="$HOME/go/bin"
-
-PATH="$HOME/.local/bin:$PATH"
-PATH="$HOME/go/bin:$PATH"
-
-JAVA_HOME="/usr/lib/jvm/java-8-openjdk"
-export PATH
-
-export Agda_datadir=/home/herulume/Downloads/Agda-nightly/data
-export PATH=/home/herulume/Downloads/Agda-nightly/bin:${PATH}
-
-
-
-
-# User specific aliases and functions
 RESET="\[\017\]"
 NORMAL="\[\033[0m\]"
 RED="\[\033[31;1m\]"
 YELLOW="\[\033[33;1m\]"
 WHITE="\[\033[37;1m\]"
 CYAN="\[\033[0;34m\]"
+
 SMILEY="${WHITE}:)${NORMAL}"
 FROWNY="${RED}:(${NORMAL}"
+
 SELECT="if [ \$? = 0 ]; then echo \"${SMILEY}\"; else echo \"${FROWNY}\"; fi"
+
 PS1="${RESET}${CYAN}\u@\h \W${NORMAL} \`${SELECT}\` ${YELLOW}>${NORMAL} "
+
+if ! [[ "$PATH" =~ "$HOME/.local/bin:$HOME/bin:" ]]
+then
+    PATH="$HOME/.local/bin:$HOME/bin:$PATH"
+fi
 
 alias g='git'
 alias god='git rebase -i --root'
 
 alias ls='ls --color=auto'
+
 alias grep='grep --colour=auto'
 alias egrep='egrep --colour=auto'
 alias fgrep='fgrep --colour=auto'
+
 alias rm='rm -i'
 alias mv='mv -i'
-
-alias v='nvim'
-alias p='sudo pacman'
-alias doom='~/.emacs.d/bin/doom'
-alias ddb='sudo docker run --name postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 -d --rm postgres'
-alias alloy='java -jar ~/.local/alloy.jar &'
 
 up() { cd $(eval printf '../'%.0s {1..$1}) && pwd; }
 
 cdls() { cd "$1"; ls;}
-
-runInOwnNamespace() {
-    unshare -c --fork --pid --mount-proc "$1"
-}
-
-morre() {
-    killall $1
-}
 
 ex ()
 {
@@ -91,6 +62,26 @@ ex ()
   fi
 }
 
-. $HOME/.asdf/asdf.sh
-. $HOME/.asdf/completions/asdf.bash
-source "$HOME/.cargo/env"
+runInOwnNamespace() {
+    unshare -c --fork --pid --mount-proc "$1"
+}
+
+GOPATH="$HOME/go"
+GOBIN="$HOME/go/bin"
+PATH="$HOME/go/bin:$PATH"
+
+JAVA_HOME="/usr/lib/jvm/java-8-openjdk"
+
+export Agda_datadir=/home/herulume/Downloads/Agda-nightly/data
+PATH=/home/herulume/Downloads/Agda-nightly/bin:${PATH}
+
+if [ -d "$HOME/.cargo/" ]; then
+    source "$HOME/.cargo/env"
+fi
+
+if [ -d "$HOME/.asdf/" ]; then
+    . $HOME/.asdf/asdf.sh
+    . $HOME/.asdf/completions/asdf.bash
+fi
+
+export PATH

@@ -1,5 +1,5 @@
 #+title: bashrc Configuration
-#+PROPERTY: header-args :shell :tangle "~/Desktop/bashrc" :mkdirp yes
+#+PROPERTY: header-args :shell :tangle ./bashrc :mkdirp yes
 
 * Global definitions
 

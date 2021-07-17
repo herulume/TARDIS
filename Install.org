@@ -1,0 +1,100 @@
+#+title: Install script
+#+PROPERTY: header-args :shell :tangle ./install :mkdirp yes
+
+* SH env
+
+#+begin_src shell
+
+  #!/bin/bash
+
+#+end_src
+
+* Tangle files
+
+Babel tangle files from the terminal.
+
+#+begin_src shell
+
+  for i in *.org; do
+      [ -f "$i" ] || break
+      emacs --batch --eval "(require 'org)" --eval "(org-babel-tangle-file \"$i\")"
+  done
+
+#+end_src
+
+* Wallpaper
+
+** Create directory
+
+#+begin_src shell
+
+  [ ! -d "$HOME/Pictures/Wallpapers/" ] && mkdir -p "$HOME/Pictures/Wallpapers"
+
+#+end_src
+
+** Copy wallpaper
+
+#+begin_src shell
+
+  cp "./wallpaper.jpg" "$HOME/Pictures/Wallpapers/"
+
+#+end_src
+
+* Bash
+
+** Bashrc
+
+#+begin_src shell
+
+ln -sfT "$HOME/dev/TARDIS/bashrc" "$HOME/.bashrc"
+
+#+end_src
+
+** Bash Profle
+
+#+begin_src shell
+
+  ln -sfT "$HOME/dev/TARDIS/bash_profile" "$HOME/.bash_profile"
+
+#+end_src 
+
+* Git
+
+#+begin_src shell
+
+  ln -sfT "$HOME/dev/TARDIS/git/gitconfig" "$HOME/.gitconfig"
+
+#+end_src
+
+* Emacs
+
+#+begin_src shell
+
+  ln -sfT "$HOME/dev/TARDIS/init.el" "$HOME/.emacs.d/init.el"
+
+#+end_src
+
+* Utils
+
+** Create directory
+
+#+begin_src shell
+
+  [ ! -d "$HOME/.local/bin/" ] && mkdir "$HOME/.local/bin"
+
+#+end_src
+
+** Copy utils and chmod them
+
+#+begin_src shell
+
+  cp "./utils/"* "$HOME/.local/bin"
+
+  chmod +x "$HOME/.local/bin/"*
+
+#+end_src
+* Xmonad
+
+- [ ! -d "$HOME/.xmonad/" ] && mkdir -p "$HOME/.xmonad"
+- ln -sfT "$HOME/dev/TARDIS/dotfiles/xmonad/xmonad.hs" "$HOME/.xmonad/xmonad.hs"
+- ln -sfT "$HOME/dev/TARDIS/dotfiles/xmonad/.xmobarrc" "$HOME/.xmonad/.xmobarrc"
