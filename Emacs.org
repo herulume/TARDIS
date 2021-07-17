@@ -101,6 +101,7 @@ Remove unneeded elements, add line and column numbers.
   (dolist (mode '(org-mode-hook
                   term-mode-hook
                   shell-mode-hook
+                  treemacs-mode-hook
                   eshell-mode-hook))
     (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
@@ -197,7 +198,6 @@ Check out the [[https://github.com/seagle0128/doom-modeline#customize][configura
 
   (use-package counsel
     :bind (("M-x" . counsel-M-x)
-	     ("C-c c" . counsel-org-capture)
            ("C-x b" . counsel-ibuffer)
            ("C-x C-f" . counsel-find-file)
            :map minibuffer-local-map
@@ -326,85 +326,101 @@ The =herulume/org-font-setup= function configures various text faces to tweak th
 
 #+begin_src emacs-lisp
 
-  (defun herulume/org-mode-setup ()
-    (org-indent-mode)
-    (variable-pitch-mode 1)
-    (visual-line-mode 1))
+      (defun herulume/org-mode-setup ()
+        (org-indent-mode)
+        (variable-pitch-mode 1)
+        (visual-line-mode 1))
 
-  (use-package org
-    :hook ((org-mode . herulume/org-mode-setup)
-           (org-agenda-mode . +org-habit-resize-graph-h))
-    :bind (("C-c a" . org-agenda))
-    :config
-    (require 'org-habit)
-    (add-to-list 'org-modules 'org-habit)
+      (use-package org
+        :hook ((org-mode . herulume/org-mode-setup)
+               (org-agenda-mode . +org-habit-resize-graph-h))
+        :bind (("C-c a" . org-agenda)
+               ("C-c c" . org-capture))
+        :config
+        (require 'org-habit)
+        (add-to-list 'org-modules 'org-habit)
 
-    (setq org-ellipsis " ▾")
-    (herulume/org-font-setup)
+        (setq org-ellipsis " ▾")
+        (herulume/org-font-setup)
 
-    (setq org-directory "~/dev/Personal/org/")
-    (setq org-agenda-files (directory-files-recursively "~/dev/Personal/org/" "\\.org$"))
-    (setq org-agenda-window-setup 'current-window)
+        (setq org-directory "~/dev/Personal/org/")
+        (setq org-agenda-files (directory-files-recursively "~/dev/Personal/org/" "\\.org$"))
+        (setq org-agenda-window-setup 'current-window)
 
-    (setq org-todo-keywords '((sequence "TODO(t)" "IN-PROGRESS(i)" "WAITING(w@/!)" "|" "DONE(d!)" "SKIP(@)" "CANCELED(c@)")))
+        (setq org-todo-keywords '((sequence "TODO(t)" "IN-PROGRESS(i)" "NEXT(n)" "WAITING(w@/!)" "|" "DONE(d!)" "SKIP(@)" "CANCELED(c@)")))
 
-    (setq org-agenda-custom-commands
-          '(("d" "Today's Tasks"
-             ((tags-todo
-               "GHD+ACTIVE+PRIORITY=\"A\""
-               ((org-agenda-files '("~/dev/Personal/org/goals.org"))
-                (org-agenda-overriding-header "Primary goals for this month")))
-              (tags-todo
-               "GHD+ACTIVE+PRIORITY=\"C\""
-               ((org-agenda-files '("~/dev/Personal/org/goals.org"))
-                (org-agenda-overriding-header "Secondary goals for this month")))
-              (agenda "" ((org-agenda-start-day ".")
-                          (org-agenda-span 1)
-                          (org-agenda-overriding-header "Today")))))
+        (setq org-agenda-custom-commands
+              '(("d" "Today's Tasks"
+                 ((tags-todo
+                   "GHD+ACTIVE+PRIORITY=\"A\""
+                   ((org-agenda-files '("~/dev/Personal/org/goals.org"))
+                    (org-agenda-overriding-header "Primary goals for this month")))
+                  (tags-todo
+                   "GHD+ACTIVE+PRIORITY=\"C\""
+                   ((org-agenda-files '("~/dev/Personal/org/goals.org"))
+                    (org-agenda-overriding-header "Secondary goals for this month")))
+                  (agenda "" ((org-agenda-start-day ".")
+                              (org-agenda-span 1)
+                              (org-agenda-overriding-header "Today")))
+                  (tags "remember"))) 
 
-            ("w" "This Week's Tasks"
-             ((tags-todo
-               "GHD+ACTIVE+PRIORITY=\"A\""
-               ((org-agenda-files '("~/dev/Personal/org/goals.org"))
-                (org-agenda-overriding-header "Primary goals for this month")))
-              (tags-todo
-               "GHD+ACTIVE+PRIORITY=\"C\""
-               ((org-agenda-files '("~/dev/Personal/org/goals.org"))
-                (org-agenda-overriding-header "Secondary goals for this month")))
-              (agenda)))))
+                ("w" "This Week's Tasks"
+                 ((tags-todo
+                   "GHD+ACTIVE+PRIORITY=\"A\""
+                   ((org-agenda-files '("~/dev/Personal/org/goals.org"))
+                    (org-agenda-overriding-header "Primary goals for this month")))
+                  (tags-todo
+                   "GHD+ACTIVE+PRIORITY=\"C\""
+                   ((org-agenda-files '("~/dev/Personal/org/goals.org"))
+                    (org-agenda-overriding-header "Secondary goals for this month")))
+                  (agenda)))))
 
-    (setq org-agenda-prefix-format '((agenda . " %i %-20:c%?-12t%-6e% s")
-                                     (todo   . " %i %-20:c %-6e")
-                                     (tags   . " %i %-20:c")
-                                     (search . " %i %-20:c")))
+        (setq org-agenda-prefix-format '((agenda . " %i %-20:c%?-12t%-6e% s")
+                                         (todo   . " %i %-20:c %-6e")
+                                         (tags   . " %i %-20:c")
+                                         (search . " %i %-20:c")))
 
-    (setq org-capture-templates
-          '(
-            ;; Bujo workflow
-            ("d" "Dailies Workflow")
-            ("dj" "Daily TODOS" entry
-             (file+datetree+opl "~/dev/Personal/org/journal.org")
-             "** Summary \n#+BEGIN: clocktable :scope tree4 :maxlevel 5 :block untilnow \n#+END: \n** Daily TODOS [\%] \n" :tree-type day)
-            ("dt" "Daily TODO" plain
-             (file "~/dev/Personal/org/journal.org")
-             "***** TODO %? \nSCHEDULED: %^t \n:PROPERTIES:\n:Category: Daily\n:Effort:   %^{Effort} \n:END: \n")
-            ;; Remeinder workflow
-            ("r" "Remember Workflow")
-            ("rt" "TODO" entry (file+headline "~/dev/Personal/org/remember.org" "Tasks")
-             "** TODO %? \nSCHEDULED: %^T \n")
-            ("re" "Event" entry (file+headline "~/dev/Personal/org/remember.org" "Events")
-             "** %? \n %^T \n")
-            ("rn" "Note" entry (file+headline "~/dev/Personal/org/remember.org" "Notes")
-             "** %<%H:%M> %? \n")
-            ;; Email workflow
-            ("m" "Email Workflow")
-            ("mf" "Follow Up" entry (file+olp "~/dev/Personal/org/Mail.org" "Follow Up")
-             "* TODO Follow up with %:fromname on %a\nSCHEDULED:%^t\n\n%i")
-            ("mr" "Read Later" entry (file+olp "~/dev/Personal/org/Mail.org" "Read Later")
-             "* TODO Read %:subject\nSCHEDULED:%^t\n%a\n\n%i")))
 
-    (setq org-refile-targets '((nil :maxlevel . 1)
-                               (org-agenda-files :maxlevel . 1))))
+        (setq org-agenda-start-with-log-mode t)
+        (setq org-log-done 'time)
+        (setq org-log-into-drawer t)
+
+        (setq org-tag-alist
+              '((:startgroup)
+                 ; Put mutually exclusive tags here
+                (:endgroup)
+                ("errand" . ?E)
+                ("home" . ?H)
+                ("work" . ?W)
+                ("university" . ?U)))
+
+        (setq org-capture-templates
+              '(
+                ;; Bujo workflow
+                ("d" "Dailies Workflow")
+                ("dj" "Daily TODOS" entry
+                 (file+olp+datetree "~/dev/Personal/org/journal.org")
+                 "** Summary \n#+BEGIN: clocktable :scope tree4 :maxlevel 5 :block untilnow \n#+END: \n** Daily TODOS [\%] \n" :tree-type day)
+                ("dt" "Daily TODO" plain
+                 (file "~/dev/Personal/org/journal.org")
+                 "***** TODO %? \nSCHEDULED: %^t \n:PROPERTIES:\n:Category: Daily\n:Effort:   %^{Effort} \n:END: \n")
+                ;; Remeinder workflow
+                ("r" "Remember Workflow")
+                ("rt" "TODO" entry (file+headline "~/dev/Personal/org/remember.org" "Tasks")
+                 "** TODO %?                     :remember:\nSCHEDULED: %^T \n")
+                ("re" "Event" entry (file+headline "~/dev/Personal/org/remember.org" "Events")
+                 "** %? \n %^T                     :remember:\n")
+                ("rn" "Note" entry (file+headline "~/dev/Personal/org/remember.org" "Notes")
+                 "** %<%H:%M> %?                     :remember:\n")
+                ;; Email workflow
+                ("m" "Email Workflow")
+                ("mf" "Follow Up" entry (file+olp "~/dev/Personal/org/Mail.org" "Follow Up")
+                 "* TODO Follow up with %:fromname on %a\nSCHEDULED:%^t\n\n%i")
+                ("mr" "Read Later" entry (file+olp "~/dev/Personal/org/Mail.org" "Read Later")
+                 "* TODO Read %:subject\nSCHEDULED:%^t\n%a\n\n%i")))
+
+        (setq org-refile-targets '((nil :maxlevel . 1)
+                                   (org-agenda-files :maxlevel . 1))))
 
 #+end_src
 
@@ -657,6 +673,103 @@ Use libnotify to send a notifcation when a new email is sync'ed.
 
   (use-package rainbow-delimiters
     :hook (prog-mode . rainbow-delimiters-mode))
+
+#+end_src
+
+** IDE Features with lsp-mode
+
+**** lsp-mode
+
+We use the excellent [[https://emacs-lsp.github.io/lsp-mode/][lsp-mode]] to enable IDE-like functionality for many different programming languages via "language servers" that speak the [[https://microsoft.github.io/language-server-protocol/][Language Server Protocol]].  Before trying to set up =lsp-mode= for a particular language, check out the [[https://emacs-lsp.github.io/lsp-mode/page/languages/][documentation for your language]] so that you can learn which language servers are available and how to install them.
+
+The =lsp-keymap-prefix= setting enables you to define a prefix for where =lsp-mode='s default keybindings will be added.  I *highly recommend* using the prefix to find out what you can do with =lsp-mode= in a buffer.
+
+The =which-key= integration adds helpful descriptions of the various keys so you should be able to learn a lot just by pressing =C-c l= in a =lsp-mode= buffer and trying different things that you find there.
+
+#+begin_src emacs-lisp
+
+  (defun efs/lsp-mode-setup ()
+    (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
+    (lsp-headerline-breadcrumb-mode))
+
+  (use-package lsp-mode
+    :commands (lsp lsp-deferred)
+    :hook (lsp-mode . efs/lsp-mode-setup)
+    :init
+    (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
+    :config
+    (lsp-enable-which-key-integration t))
+
+#+end_src
+
+**** lsp-ui
+
+[[https://emacs-lsp.github.io/lsp-ui/][lsp-ui]] is a set of UI enhancements built on top of =lsp-mode= which make Emacs feel even more like an IDE.  Check out the screenshots on the =lsp-ui= homepage (linked at the beginning of this paragraph) to see examples of what it can do.
+
+#+begin_src emacs-lisp
+
+  (use-package lsp-ui
+    :hook (lsp-mode . lsp-ui-mode)
+    :custom
+    (lsp-ui-doc-position 'bottom))
+
+#+end_src
+
+**** lsp-treemacs
+
+[[https://github.com/emacs-lsp/lsp-treemacs][lsp-treemacs]] provides nice tree views for different aspects of your code like symbols in a file, references of a symbol, or diagnostic messages (errors and warnings) that are found in your code.
+
+Try these commands with =M-x=:
+
+- =lsp-treemacs-symbols= - Show a tree view of the symbols in the current file
+- =lsp-treemacs-references= - Show a tree view for the references of the symbol under the cursor
+- =lsp-treemacs-error-list= - Show a tree view for the diagnostic messages in the project
+
+This package is built on the [[https://github.com/Alexander-Miller/treemacs][treemacs]] package which might be of some interest to you if you like to have a file browser at the left side of your screen in your editor.
+
+#+begin_src emacs-lisp
+
+  (use-package lsp-treemacs
+    :after lsp)
+
+#+end_src
+
+**** lsp-ivy
+
+[[https://github.com/emacs-lsp/lsp-ivy][lsp-ivy]] integrates Ivy with =lsp-mode= to make it easy to search for things by name in your code.  When you run these commands, a prompt will appear in the minibuffer allowing you to type part of the name of a symbol in your code.  Results will be populated in the minibuffer so that you can find what you're looking for and jump to that location in the code upon selecting the result.
+
+Try these commands with =M-x=:
+
+- =lsp-ivy-workspace-symbol= - Search for a symbol name in the current project workspace
+- =lsp-ivy-global-workspace-symbol= - Search for a symbol name in all active project workspaces
+
+#+begin_src emacs-lisp
+
+  (use-package lsp-ivy)
+
+#+end_src
+
+** Company Mode
+
+[[http://company-mode.github.io/][Company Mode]] provides a nicer in-buffer completion interface than =completion-at-point= which is more reminiscent of what you would expect from an IDE.  We add a simple configuration to make the keybindings a little more useful (=TAB= now completes the selection and initiates completion at the current location if needed).
+
+We also use [[https://github.com/sebastiencs/company-box][company-box]] to further enhance the look of the completions with icons and better overall presentation.
+
+#+begin_src emacs-lisp
+
+  (use-package company
+    :after lsp-mode
+    :hook (lsp-mode . company-mode)
+    :bind (:map company-active-map
+           ("<tab>" . company-complete-selection))
+          (:map lsp-mode-map
+           ("<tab>" . company-indent-or-complete-common))
+    :custom
+    (company-minimum-prefix-length 1)
+    (company-idle-delay 0.0))
+
+  (use-package company-box
+    :hook (company-mode . company-box-mode))
 
 #+end_src
 
