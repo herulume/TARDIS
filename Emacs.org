@@ -234,6 +234,7 @@ Check out the [[https://github.com/seagle0128/doom-modeline#customize][configura
 
   (use-package dashboard
     :config
+    (setq dashboard-startup-banner 2)
     (setq dashboard-center-content t)
     (setq dashboard-set-footer nil)
     (setq dashboard-set-init-info nil)
@@ -241,8 +242,10 @@ Check out the [[https://github.com/seagle0128/doom-modeline#customize][configura
     (setq dashboard-set-heading-icons t)
     (setq dashboard-set-file-icons t)
 
+
     (setq dashboard-items '((bookmarks . 5)
-                            (projects . 5)))
+                            (recents  . 5)
+                            (projects . 10)))
 
     (dashboard-setup-startup-hook))
 
@@ -343,7 +346,7 @@ The =herulume/org-font-setup= function configures various text faces to tweak th
     (setq org-agenda-files (directory-files-recursively "~/dev/Personal/org/" "\\.org$"))
     (setq org-agenda-window-setup 'current-window)
 
-    (setq org-todo-keywords '((sequence "TODO(t)" "IN-PROGRESS(i)" "WAITING(w@/!)" "|" "DONE(d!)" "SKIP(@)" "CANCELLED(c@)")))
+    (setq org-todo-keywords '((sequence "TODO(t)" "IN-PROGRESS(i)" "WAITING(w@/!)" "|" "DONE(d!)" "SKIP(@)" "CANCELED(c@)")))
 
     (setq org-agenda-custom-commands
           '(("d" "Today's Tasks"
@@ -380,7 +383,7 @@ The =herulume/org-font-setup= function configures various text faces to tweak th
             ;; Bujo workflow
             ("d" "Dailies Workflow")
             ("dj" "Daily TODOS" entry
-             (file+datetree "~/dev/Personal/org/journal.org")
+             (file+datetree+opl "~/dev/Personal/org/journal.org")
              "** Summary \n#+BEGIN: clocktable :scope tree4 :maxlevel 5 :block untilnow \n#+END: \n** Daily TODOS [\%] \n" :tree-type day)
             ("dt" "Daily TODO" plain
              (file "~/dev/Personal/org/journal.org")
@@ -461,7 +464,7 @@ This snippet adds a hook to =org-mode= buffers so that =efs/org-babel-tangle-con
   (defun herulume/org-babel-tangle-config ()
     (interactive)
     (when (string-equal (buffer-file-name)
-                        (expand-file-name "~/dev/emacs.d/Emacs.org"))
+                        (expand-file-name "~/dev/TARDIS/Emacs.org"))
       ;; Dynamic scoping to the rescue
       (let ((org-confirm-babel-evaluate nil))
         (org-babel-tangle))))
