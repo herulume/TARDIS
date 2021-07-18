@@ -264,7 +264,8 @@
           ("errand" . ?E)
           ("home" . ?H)
           ("work" . ?W)
-          ("university" . ?U)))
+          ("university" . ?U)
+          ("pleasure" . ?P)))
 
   (setq org-capture-templates
         '(
