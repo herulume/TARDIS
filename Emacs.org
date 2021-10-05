@@ -328,102 +328,103 @@ The =herulume/org-font-setup= function configures various text faces to tweak th
 
 #+begin_src emacs-lisp
 
-        (defun herulume/org-mode-setup ()
-          (org-indent-mode)
-          (variable-pitch-mode 1)
-          (visual-line-mode 1))
+  (defun herulume/org-mode-setup ()
+    (org-indent-mode)
+    (variable-pitch-mode 1)
+    (visual-line-mode 1))
 
-        (use-package org
-          :hook ((org-mode . herulume/org-mode-setup)
-                 (org-agenda-mode . +org-habit-resize-graph-h))
-          :bind (("C-c a" . org-agenda)
-                 ("C-c c" . org-capture))
-          :config
-          (require 'org-habit)
-          (add-to-list 'org-modules 'org-habit)
+  (use-package org
+    :hook ((org-mode . herulume/org-mode-setup)
+           (org-agenda-mode . +org-habit-resize-graph-h))
+    :bind (("C-c a" . org-agenda)
+           ("C-c c" . org-capture))
+    :config
+    (require 'org-habit)
+    (add-to-list 'org-modules 'org-habit)
 
-          (setq org-ellipsis " ▾")
-          (herulume/org-font-setup)
+    (setq org-ellipsis " ▾")
+    (herulume/org-font-setup)
 
-          (setq org-directory "~/dev/Personal/org/")
-          (setq org-agenda-files (directory-files-recursively "~/dev/Personal/org/" "\\.org$"))
-          (setq org-agenda-window-setup 'current-window)
+    (setq org-directory "~/dev/Personal/org/")
+    (setq org-agenda-files (directory-files-recursively "~/dev/Personal/org/" "\\.org$"))
+    (setq org-agenda-window-setup 'current-window)
 
-          (setq org-todo-keywords '((sequence "TODO(t)" "IN-PROGRESS(i)" "NEXT(n)" "WAITING(w@/!)" "|" "DONE(d!)" "SKIP(@)" "CANCELED(c@)")))
+    (setq org-todo-keywords '((sequence "TODO(t)" "IN-PROGRESS(i)" "NEXT(n)" "WAITING(w@/!)" "|" "DONE(d!)" "SKIP(@)" "CANCELED(c@)")))
 
-          (setq org-agenda-custom-commands
-                '(("d" "Today's Tasks"
-                   ((tags-todo
-                     "GHD+ACTIVE+PRIORITY=\"A\""
-                     ((org-agenda-files '("~/dev/Personal/org/goals.org"))
-                      (org-agenda-overriding-header "Primary goals for this month")))
-                    (tags-todo
-                     "GHD+ACTIVE+PRIORITY=\"C\""
-                     ((org-agenda-files '("~/dev/Personal/org/goals.org"))
-                      (org-agenda-overriding-header "Secondary goals for this month")))
-                    (agenda "" ((org-agenda-start-day ".")
-                                (org-agenda-span 1)
-                                (org-agenda-overriding-header "Today")))
-                    (tags "remember"))) 
+    (setq org-agenda-custom-commands
+          '(("d" "Today's Tasks"
+             ((tags-todo
+               "GHD+ACTIVE+PRIORITY=\"A\""
+               ((org-agenda-files '("~/dev/Personal/org/goals.org"))
+                (org-agenda-overriding-header "Primary goals for this month")))
+              (tags-todo
+               "GHD+ACTIVE+PRIORITY=\"C\""
+               ((org-agenda-files '("~/dev/Personal/org/goals.org"))
+                (org-agenda-overriding-header "Secondary goals for this month")))
+              (agenda "" ((org-agenda-start-day ".")
+                          (org-agenda-span 1)
+                          (org-agenda-overriding-header "Today")))
+              (tags "remember"))) 
 
-                  ("w" "This Week's Tasks"
-                   ((tags-todo
-                     "GHD+ACTIVE+PRIORITY=\"A\""
-                     ((org-agenda-files '("~/dev/Personal/org/goals.org"))
-                      (org-agenda-overriding-header "Primary goals for this month")))
-                    (tags-todo
-                     "GHD+ACTIVE+PRIORITY=\"C\""
-                     ((org-agenda-files '("~/dev/Personal/org/goals.org"))
-                      (org-agenda-overriding-header "Secondary goals for this month")))
-                    (agenda)))))
+            ("w" "This Week's Tasks"
+             ((tags-todo
+               "GHD+ACTIVE+PRIORITY=\"A\""
+               ((org-agenda-files '("~/dev/Personal/org/goals.org"))
+                (org-agenda-overriding-header "Primary goals for this month")))
+              (tags-todo
+               "GHD+ACTIVE+PRIORITY=\"C\""
+               ((org-agenda-files '("~/dev/Personal/org/goals.org"))
+                (org-agenda-overriding-header "Secondary goals for this month")))
+              (agenda)))))
 
-          (setq org-agenda-prefix-format '((agenda . " %i %-20:c%?-12t%-6e% s")
-                                           (todo   . " %i %-20:c %-6e")
-                                           (tags   . " %i %-20:c")
-                                           (search . " %i %-20:c")))
+    (setq org-agenda-prefix-format '((agenda . " %i %-20:c%?-12t%-6e% s")
+                                     (todo   . " %i %-20:c %-6e")
+                                     (tags   . " %i %-20:c")
+                                     (search . " %i %-20:c")))
 
 
-          (setq org-agenda-start-with-log-mode t)
-          (setq org-log-done 'time)
-          (setq org-log-into-drawer t)
+    (setq org-agenda-start-with-log-mode t)
+    (setq org-log-done 'time)
+    (setq org-log-into-drawer t)
 
-          (setq org-tag-alist
-                '((:startgroup)
-                   ; Put mutually exclusive tags here
-                  (:endgroup)
-                  ("errand" . ?E)
-                  ("home" . ?H)
-                  ("work" . ?W)
-                  ("university" . ?U)
-                  ("pleasure" . ?P)))
+    (setq org-tag-alist
+          '((:startgroup)
+             ; Put mutually exclusive tags here
+            (:endgroup)
+            ("errand" . ?E)
+            ("home" . ?H)
+	        ("health" . ?h)
+            ("work" . ?W)
+            ("university" . ?U)
+            ("pleasure" . ?P)))
 
-          (setq org-capture-templates
-                '(
-                  ;; Bujo workflow
-                  ("d" "Dailies Workflow")
-                  ("dj" "Daily TODOS" entry
-                   (file+olp+datetree "~/dev/Personal/org/journal.org")
-                   "** Summary \n#+BEGIN: clocktable :scope tree4 :maxlevel 5 :block untilnow \n#+END: \n** Daily TODOS [\%] \n" :tree-type day)
-                  ("dt" "Daily TODO" plain
-                   (file "~/dev/Personal/org/journal.org")
-                   "***** TODO %? \nSCHEDULED: %^t \n:PROPERTIES:\n:Category: Daily\n:Effort:   %^{Effort} \n:END: \n")
-                  ;; Remeinder workflow
-                  ("r" "Remember Workflow")
-                  ("rt" "TODO" entry (file+headline "~/dev/Personal/org/remember.org" "Tasks")
-                   "** TODO %?                     :remember:\nSCHEDULED: %^T \n")
-                  ("re" "Event" entry (file+headline "~/dev/Personal/org/remember.org" "Events")
-                   "** %? \n %^T                     :remember:\n")
-                  ("rn" "Note" entry (file+headline "~/dev/Personal/org/remember.org" "Notes")
-                   "** %<%H:%M> %?                     :remember:\n")
-                  ;; Email workflow
-                  ("m" "Email Workflow")
-                  ("mf" "Follow Up" entry (file+olp "~/dev/Personal/org/Mail.org" "Follow Up")
-                   "* TODO Follow up with %:fromname on %a\nSCHEDULED:%^t\n\n%i")
-                  ("mr" "Read Later" entry (file+olp "~/dev/Personal/org/Mail.org" "Read Later")
-                   "* TODO Read %:subject\nSCHEDULED:%^t\n%a\n\n%i")))
+    (setq org-capture-templates
+          '(
+            ;; Bujo workflow
+            ("d" "Dailies Workflow")
+            ("dj" "Daily TODOS" entry
+             (file+olp+datetree "~/dev/Personal/org/journal.org")
+             "** Summary \n#+BEGIN: clocktable :scope tree4 :maxlevel 5 :block untilnow \n#+END: \n** Daily TODOS [\%] \n" :tree-type day)
+            ("dt" "Daily TODO" plain
+             (file "~/dev/Personal/org/journal.org")
+             "***** TODO %? \nSCHEDULED: %^t \n:PROPERTIES:\n:Category: Daily\n:Effort:   %^{Effort} \n:END: \n")
+            ;; Remeinder workflow
+            ("r" "Remember Workflow")
+            ("rt" "TODO" entry (file+headline "~/dev/Personal/org/remember.org" "Tasks")
+             "** TODO %?                     :remember:\nSCHEDULED: %^T \n")
+            ("re" "Event" entry (file+headline "~/dev/Personal/org/remember.org" "Events")
+             "** %? \n %^T                     :remember:\n")
+            ("rn" "Note" entry (file+headline "~/dev/Personal/org/remember.org" "Notes")
+             "** %<%H:%M> %?                     :remember:\n")
+            ;; Email workflow
+            ("m" "Email Workflow")
+            ("mf" "Follow Up" entry (file+olp "~/dev/Personal/org/Mail.org" "Follow Up")
+             "* TODO Follow up with %:fromname on %a\nSCHEDULED:%^t\n\n%i")
+            ("mr" "Read Later" entry (file+olp "~/dev/Personal/org/Mail.org" "Read Later")
+             "* TODO Read %:subject\nSCHEDULED:%^t\n%a\n\n%i")))
 
-          (setq org-refile-targets '((nil :maxlevel . 1)
-                                     (org-agenda-files :maxlevel . 1))))
+    (setq org-refile-targets '((nil :maxlevel . 1)
+                               (org-agenda-files :maxlevel . 1))))
 
 #+end_src
 
@@ -778,6 +779,20 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
 
 #+end_src
 
+** Snippets
+
+[[https://github.com/joaotavora/yasnippet][Yasnippet]] is the de facto snippet system in Emacs.
+
+#+begin_src emacs-lisp
+
+  (use-package yasnippet
+    :config
+    (yas-global-mode))
+
+;;  (use-package yasnippet-snippets)
+
+#+end_src
+
 ** Languages
 
 *** Agda
@@ -788,7 +803,22 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
     :config
     (load-file (let ((coding-system-for-read 'utf-8))
             (shell-command-to-string "agda-mode locate")))
-    (setq agda2-directory "/home/herulume/Downloads/Agda-nightly-data/emacs-mode/"))
+    (setq agda2-directory "/home/herulume/Downloads/Agda-nightly-data/emacs-mode/")
+    (setq agda2-program-args
+          (quote
+           ("+RTS" "-K256M" "-H6G" "-M6G" "-A128M" "-RTS"))))
+
+#+end_src
+*** Elixir
+
+#+begin_src emacs-lisp
+
+  (use-package elixir-mode)
+
+  (use-package exunit
+    :init (add-hook 'elixir-mode-hook 'exunit-mode))
+
+  (add-to-list 'exec-path "~/.local/bin/elixir-lsp")
 
 #+end_src
 
@@ -804,6 +834,7 @@ Make sure that you have the [[https://github.com/akermu/emacs-libvterm/#requirem
 
   (use-package vterm
     :commands vterm
+    :bind (("C-c t" . vterm))
     :config
     ;(setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *")  ;; Set this to match your custom shell prompt
     (setq vterm-shell "bash")                       ;; Set this to customize the shell to launch
@@ -932,53 +963,55 @@ Dired is a built-in file manager for Emacs that does some pretty amazing things!
 
 #+begin_src emacs-lisp
 
-(use-package pdf-tools
-  :config
-  (pdf-tools-install)
-  (setq-default pdf-view-display-size 'fit-page)
-  (setq pdf-annot-activate-created-annotations t)
-  (define-key pdf-view-mode-map (kbd "C-s") 'isearch-forward)
-  (define-key pdf-view-mode-map (kbd "C-r") 'isearch-backward))
+        (use-package pdf-tools
+          :config
+          (pdf-tools-install)
+          (setq-default pdf-view-display-size 'fit-page)
+          (setq pdf-annot-activate-created-annotations t)
+          (define-key pdf-view-mode-map (kbd "C-s") 'isearch-forward)
+          (define-key pdf-view-mode-map (kbd "C-r") 'isearch-backward))
 
-(use-package auctex-latexmk
-  :config
-  (auctex-latexmk-setup)
-  (setq auctex-latexmk-inherit-TeX-PDF-mode t))
+        (use-package auctex-latexmk
+          :config
+          (auctex-latexmk-setup)
+          (setq auctex-latexmk-inherit-TeX-PDF-mode t))
 
-(use-package reftex
-  :defer t
-  :config
-  (setq reftex-cite-prompt-optional-args t)) ;; Prompt for empty optional arguments in cite
+        (use-package reftex
+          :defer t
+          :config
+          (setq reftex-cite-prompt-optional-args t)) ;; Prompt for empty optional arguments in cite
 
-(use-package auto-dictionary
-  :init(add-hook 'flyspell-mode-hook (lambda () (auto-dictionary-mode 1))))
+        (use-package auto-dictionary
+          :init(add-hook 'flyspell-mode-hook (lambda () (auto-dictionary-mode 1))))
 
-;(use-package company-auctex
-;  :init (company-auctex-init))
+        (use-package company-auctex
+          :init (company-auctex-init))
 
-(use-package tex
-  :ensure auctex
-  :mode ("\\.tex\\'" . latex-mode)
-  :config (progn
-	    (setq TeX-source-correlate-mode t)
-	    (setq TeX-source-correlate-method 'synctex)
-	    (setq TeX-auto-save t)
-	    (setq TeX-parse-self t)
-	    (setq-default TeX-master "paper.tex")
-	    (setq reftex-plug-into-AUCTeX t)
-	    (pdf-tools-install)
-	    (setq TeX-view-program-selection '((output-pdf "PDF Tools"))
-		  TeX-source-correlate-start-server t)
-	    ;; Update PDF buffers after successful LaTeX runs
-	    (add-hook 'TeX-after-compilation-finished-functions
-		      #'TeX-revert-document-buffer)
-	    (add-hook 'LaTeX-mode-hook
-		      (lambda ()
-			(reftex-mode t)
-			(flyspell-mode t)))
-	    ))
+        (use-package tex
+          :ensure auctex
+          :mode ("\\.tex\\'" . latex-mode)
+          :config (progn
+                    (setq TeX-source-correlate-mode t)
+                    (setq TeX-source-correlate-method 'synctex)
+                    (setq TeX-auto-save t)
+                    (setq TeX-parse-self t)
+    ;;                (setq-default TeX-master "paper.tex")
+                    (setq reftex-plug-into-AUCTeX t)
+                    (pdf-tools-install)
+                    (setq TeX-view-program-selection '((output-pdf "PDF Tools"))
+                          TeX-source-correlate-start-server t)
+                    ;; Update PDF buffers after successful LaTeX runs
+                    (add-hook 'TeX-after-compilation-finished-functions
+                              #'TeX-revert-document-buffer)
+                    (add-hook 'LaTeX-mode-hook
+                              (lambda ()
+                                (reftex-mode t)
+                                (flyspell-mode t)))
+                    ))
+
 
 #+end_src
+
 * End Config
 
 Make gc pauses faster by decreasing the threshold.

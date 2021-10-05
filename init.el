@@ -263,6 +263,7 @@
           (:endgroup)
           ("errand" . ?E)
           ("home" . ?H)
+	      ("health" . ?h)
           ("work" . ?W)
           ("university" . ?U)
           ("pleasure" . ?P)))
@@ -495,14 +496,31 @@
 (use-package company-box
   :hook (company-mode . company-box-mode))
 
+(use-package yasnippet
+    :config
+    (yas-global-mode))
+
+;;  (use-package yasnippet-snippets)
+
 (use-package agda2-mode
   :config
   (load-file (let ((coding-system-for-read 'utf-8))
           (shell-command-to-string "agda-mode locate")))
-  (setq agda2-directory "/home/herulume/Downloads/Agda-nightly-data/emacs-mode/"))
+  (setq agda2-directory "/home/herulume/Downloads/Agda-nightly-data/emacs-mode/")
+  (setq agda2-program-args
+        (quote
+         ("+RTS" "-K256M" "-H6G" "-M6G" "-A128M" "-RTS"))))
+
+(use-package elixir-mode)
+
+(use-package exunit
+  :init (add-hook 'elixir-mode-hook 'exunit-mode))
+
+(add-to-list 'exec-path "~/.local/bin/elixir-lsp")
 
 (use-package vterm
   :commands vterm
+  :bind (("C-c t" . vterm))
   :config
   ;(setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *")  ;; Set this to match your custom shell prompt
   (setq vterm-shell "bash")                       ;; Set this to customize the shell to launch
@@ -548,49 +566,49 @@
       (goto-char l))))
 
 (use-package pdf-tools
-  :config
-  (pdf-tools-install)
-  (setq-default pdf-view-display-size 'fit-page)
-  (setq pdf-annot-activate-created-annotations t)
-  (define-key pdf-view-mode-map (kbd "C-s") 'isearch-forward)
-  (define-key pdf-view-mode-map (kbd "C-r") 'isearch-backward))
+      :config
+      (pdf-tools-install)
+      (setq-default pdf-view-display-size 'fit-page)
+      (setq pdf-annot-activate-created-annotations t)
+      (define-key pdf-view-mode-map (kbd "C-s") 'isearch-forward)
+      (define-key pdf-view-mode-map (kbd "C-r") 'isearch-backward))
 
-(use-package auctex-latexmk
-  :config
-  (auctex-latexmk-setup)
-  (setq auctex-latexmk-inherit-TeX-PDF-mode t))
+    (use-package auctex-latexmk
+      :config
+      (auctex-latexmk-setup)
+      (setq auctex-latexmk-inherit-TeX-PDF-mode t))
 
-(use-package reftex
-  :defer t
-  :config
-  (setq reftex-cite-prompt-optional-args t)) ;; Prompt for empty optional arguments in cite
+    (use-package reftex
+      :defer t
+      :config
+      (setq reftex-cite-prompt-optional-args t)) ;; Prompt for empty optional arguments in cite
 
-(use-package auto-dictionary
-  :init(add-hook 'flyspell-mode-hook (lambda () (auto-dictionary-mode 1))))
+    (use-package auto-dictionary
+      :init(add-hook 'flyspell-mode-hook (lambda () (auto-dictionary-mode 1))))
 
-;(use-package company-auctex
-;  :init (company-auctex-init))
+    (use-package company-auctex
+      :init (company-auctex-init))
 
-(use-package tex
-  :ensure auctex
-  :mode ("\\.tex\\'" . latex-mode)
-  :config (progn
-	    (setq TeX-source-correlate-mode t)
-	    (setq TeX-source-correlate-method 'synctex)
-	    (setq TeX-auto-save t)
-	    (setq TeX-parse-self t)
-	    (setq-default TeX-master "paper.tex")
-	    (setq reftex-plug-into-AUCTeX t)
-	    (pdf-tools-install)
-	    (setq TeX-view-program-selection '((output-pdf "PDF Tools"))
-		  TeX-source-correlate-start-server t)
-	    ;; Update PDF buffers after successful LaTeX runs
-	    (add-hook 'TeX-after-compilation-finished-functions
-		      #'TeX-revert-document-buffer)
-	    (add-hook 'LaTeX-mode-hook
-		      (lambda ()
-			(reftex-mode t)
-			(flyspell-mode t)))
-	    ))
+    (use-package tex
+      :ensure auctex
+      :mode ("\\.tex\\'" . latex-mode)
+      :config (progn
+                (setq TeX-source-correlate-mode t)
+                (setq TeX-source-correlate-method 'synctex)
+                (setq TeX-auto-save t)
+                (setq TeX-parse-self t)
+;;                (setq-default TeX-master "paper.tex")
+                (setq reftex-plug-into-AUCTeX t)
+                (pdf-tools-install)
+                (setq TeX-view-program-selection '((output-pdf "PDF Tools"))
+                      TeX-source-correlate-start-server t)
+                ;; Update PDF buffers after successful LaTeX runs
+                (add-hook 'TeX-after-compilation-finished-functions
+                          #'TeX-revert-document-buffer)
+                (add-hook 'LaTeX-mode-hook
+                          (lambda ()
+                            (reftex-mode t)
+                            (flyspell-mode t)))
+                ))
 
 (setq gc-cons-threshold (* 2 1000 1000))
