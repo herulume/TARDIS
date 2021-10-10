@@ -61,8 +61,9 @@
                 term-mode-hook
                 shell-mode-hook
                 treemacs-mode-hook
-		  vterm-mode-hook
-                eshell-mode-hook))
+                vterm-mode-hook
+                eshell-mode-hook
+                dired-mode-hook))
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
 (set-face-attribute 'default nil :font "Fira Code Retina" :height herulume/default-font-size)
@@ -210,7 +211,10 @@
          ("C-c c" . org-capture))
   :config
   (require 'org-habit)
+  (require 'org-timer)
   (add-to-list 'org-modules 'org-habit)
+
+  (setq org-clock-sound "~/dev/TARDIS/bell.wav")
 
   (setq org-ellipsis " ▾")
   (herulume/org-font-setup)
@@ -263,7 +267,7 @@
           (:endgroup)
           ("errand" . ?E)
           ("home" . ?H)
-	      ("health" . ?h)
+              ("health" . ?h)
           ("work" . ?W)
           ("university" . ?U)
           ("pleasure" . ?P)))
@@ -466,7 +470,8 @@
 
 (use-package lsp-mode
   :commands (lsp lsp-deferred)
-  :hook (lsp-mode . efs/lsp-mode-setup)
+  :hook ((lsp-mode . efs/lsp-mode-setup)
+         (elixir-mode . lsp))
   :init
   (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
   :config
@@ -497,10 +502,10 @@
   :hook (company-mode . company-box-mode))
 
 (use-package yasnippet
-    :config
-    (yas-global-mode))
+   :config
+   (yas-global-mode))
 
-;;  (use-package yasnippet-snippets)
+(use-package yasnippet-snippets)
 
 (use-package agda2-mode
   :config
@@ -564,6 +569,49 @@
       (delete-region (point-min) (point-max))
       (insert return-string)
       (goto-char l))))
+
+(defun herulume/pomodoro ()
+  "Start a pomodoro sequence"
+  (interactive)
+
+  (setq pomodoro-session 0)
+  (while (< pomodoro-session 3)
+    (herulume/pomodoro-work)
+    (herulume/pomodoro-short-break)
+    (setq pomodoro-session (1+ pomodoro-session)))
+
+  (herulume/pomodoro-work)
+  (herulume/pomodoro-long-break))
+
+(defun herulume/pomodoro-work ()
+  "Start a pomodoro work timer"
+  (interactive)
+  (org-timer-set-timer 25))
+
+(defun herulume/pomodoro-short-break ()
+  "Start a pomodoro short break timer"
+  (interactive)
+  (org-timer-set-timer 5))
+
+(defun herulume/pomodoro-long-break ()
+  "Start a pomodoro long break timer"
+  (interactive)
+  (org-timer-set-timer 20)) ; 15-30
+
+(defun herulume/pomodoro-stop ()
+  "Stop a pomodoro timer"
+  (interactive)
+  (org-timer-stop))
+
+(defun herulume/pomodoro-pause-or-continue ()
+  "Pause or continue a pomodoro timer"
+  (interactive)
+  (org-timer-pause-or-continue))
+
+(defun herulume/pomodoro-show-timer ()
+  "Show pomodoro timer"
+  (interactive)
+  (org-timer-show-remaining-time))
 
 (use-package pdf-tools
       :config

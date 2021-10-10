@@ -75,37 +75,37 @@ I don't want a bunch of transient files showing up as untracked in the Git repo 
 
 #+end_src
 
-
 * Basic UI Configuration
 
 Remove unneeded elements, add line and column numbers.
 
 #+begin_src emacs-lisp
 
-  (setq inhibit-startup-message t)
+    (setq inhibit-startup-message t)
 
-  (scroll-bar-mode -1)        ; Disable visible scrollbar
-  (tool-bar-mode -1)          ; Disable the toolbar
-  (tooltip-mode -1)           ; Disable tooltips
-  (set-fringe-mode 10)        ; Give some breathing room
+    (scroll-bar-mode -1)        ; Disable visible scrollbar
+    (tool-bar-mode -1)          ; Disable the toolbar
+    (tooltip-mode -1)           ; Disable tooltips
+    (set-fringe-mode 10)        ; Give some breathing room
 
-  (menu-bar-mode -1)            ; Disable the menu bar
+    (menu-bar-mode -1)            ; Disable the menu bar
 
-  ;; Set up the visible bell
-  (setq visible-bell t)
+    ;; Set up the visible bell
+    (setq visible-bell t)
 
-  ;; Column and line numbers
-  (column-number-mode)
-  (global-display-line-numbers-mode t)
+    ;; Column and line numbers
+    (column-number-mode)
+    (global-display-line-numbers-mode t)
 
-  ;; Disable line numbers for some modes
-  (dolist (mode '(org-mode-hook
-                  term-mode-hook
-                  shell-mode-hook
-                  treemacs-mode-hook
-		    vterm-mode-hook
-                  eshell-mode-hook))
-    (add-hook mode (lambda () (display-line-numbers-mode 0))))
+    ;; Disable line numbers for some modes
+    (dolist (mode '(org-mode-hook
+                    term-mode-hook
+                    shell-mode-hook
+                    treemacs-mode-hook
+                    vterm-mode-hook
+                    eshell-mode-hook
+                    dired-mode-hook))
+      (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
 #+end_src
 
@@ -124,7 +124,6 @@ I am using the [[https://github.com/tonsky/FiraCode][Fira Code]] and [[https://f
   (set-face-attribute 'variable-pitch nil :font "Cantarell" :height herulume/default-font-size :weight 'regular)
 
 #+end_src
-
 
 * UI Configuration
 
@@ -340,7 +339,10 @@ The =herulume/org-font-setup= function configures various text faces to tweak th
            ("C-c c" . org-capture))
     :config
     (require 'org-habit)
+    (require 'org-timer)
     (add-to-list 'org-modules 'org-habit)
+
+    (setq org-clock-sound "~/dev/TARDIS/bell.wav")
 
     (setq org-ellipsis " ▾")
     (herulume/org-font-setup)
@@ -393,7 +395,7 @@ The =herulume/org-font-setup= function configures various text faces to tweak th
             (:endgroup)
             ("errand" . ?E)
             ("home" . ?H)
-	        ("health" . ?h)
+                ("health" . ?h)
             ("work" . ?W)
             ("university" . ?U)
             ("pleasure" . ?P)))
@@ -512,7 +514,6 @@ This snippet adds a hook to =org-mode= buffers so that =efs/org-babel-tangle-con
                                         (?I . "Important"))))
 
 #+end_src
-
 
 * Email
 
@@ -633,7 +634,6 @@ Use libnotify to send a notifcation when a new email is sync'ed.
 
 #+end_src
 
-
 * Development
 
 ** Projectile
@@ -694,17 +694,18 @@ The =which-key= integration adds helpful descriptions of the various keys so you
 
 #+begin_src emacs-lisp
 
-  (defun efs/lsp-mode-setup ()
-    (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
-    (lsp-headerline-breadcrumb-mode))
+    (defun efs/lsp-mode-setup ()
+      (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
+      (lsp-headerline-breadcrumb-mode))
 
-  (use-package lsp-mode
-    :commands (lsp lsp-deferred)
-    :hook (lsp-mode . efs/lsp-mode-setup)
-    :init
-    (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
-    :config
-    (lsp-enable-which-key-integration t))
+    (use-package lsp-mode
+      :commands (lsp lsp-deferred)
+      :hook ((lsp-mode . efs/lsp-mode-setup)
+             (elixir-mode . lsp))
+      :init
+      (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
+      :config
+      (lsp-enable-which-key-integration t))
 
 #+end_src
 
@@ -789,7 +790,7 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
     :config
     (yas-global-mode))
 
-;;  (use-package yasnippet-snippets)
+ (use-package yasnippet-snippets)
 
 #+end_src
 
@@ -958,6 +959,54 @@ Dired is a built-in file manager for Emacs that does some pretty amazing things!
 
 #+end_src
 
+** Pomodoro
+
+#+begin_src emacs-lisp
+
+  (defun herulume/pomodoro ()
+    "Start a pomodoro sequence"
+    (interactive)
+
+    (setq pomodoro-session 0)
+    (while (< pomodoro-session 3)
+      (herulume/pomodoro-work)
+      (herulume/pomodoro-short-break)
+      (setq pomodoro-session (1+ pomodoro-session)))
+
+    (herulume/pomodoro-work)
+    (herulume/pomodoro-long-break))
+
+  (defun herulume/pomodoro-work ()
+    "Start a pomodoro work timer"
+    (interactive)
+    (org-timer-set-timer 25))
+
+  (defun herulume/pomodoro-short-break ()
+    "Start a pomodoro short break timer"
+    (interactive)
+    (org-timer-set-timer 5))
+
+  (defun herulume/pomodoro-long-break ()
+    "Start a pomodoro long break timer"
+    (interactive)
+    (org-timer-set-timer 20)) ; 15-30
+
+  (defun herulume/pomodoro-stop ()
+    "Stop a pomodoro timer"
+    (interactive)
+    (org-timer-stop))
+
+  (defun herulume/pomodoro-pause-or-continue ()
+    "Pause or continue a pomodoro timer"
+    (interactive)
+    (org-timer-pause-or-continue))
+
+  (defun herulume/pomodoro-show-timer ()
+    "Show pomodoro timer"
+    (interactive)
+    (org-timer-show-remaining-time))
+
+#+end_src
 
 * Testing
 
