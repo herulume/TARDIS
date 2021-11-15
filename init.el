@@ -40,6 +40,8 @@
 	(expand-file-name (format "emacs-custom-%s.el" (user-uid)) temporary-file-directory)))
 (load custom-file t)
 
+(global-auto-revert-mode t)
+
 (setq inhibit-startup-message t)
 
 (scroll-bar-mode -1)        ; Disable visible scrollbar
@@ -60,7 +62,6 @@
 (dolist (mode '(org-mode-hook
                 term-mode-hook
                 shell-mode-hook
-                treemacs-mode-hook
                 vterm-mode-hook
                 eshell-mode-hook
                 dired-mode-hook))
@@ -356,6 +357,7 @@
   (add-to-list 'mu4e-view-actions '("ViewInBrowser" . mu4e-action-view-in-browser) t)
 
   (setq mu4e-change-filenames-when-moving t)
+  (setq mu4e-headers-skip-duplicates t)
 
   ;; Refresh mail using isync every 10 minutes
   (setq mu4e-update-interval (* 10 60))
@@ -372,8 +374,8 @@
 
   (setq mu4e-compose-signature
     (concat
-      "Kind regards,\n"
-      "Eduardo"))
+      "(Sent from Emacs)"))
+
 
 
   (setq mu4e-contexts
@@ -471,7 +473,8 @@
 (use-package lsp-mode
   :commands (lsp lsp-deferred)
   :hook ((lsp-mode . efs/lsp-mode-setup)
-         (elixir-mode . lsp))
+         (elixir-mode . lsp)
+         (go-mode . lsp))
   :init
   (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
   :config
@@ -481,9 +484,6 @@
   :hook (lsp-mode . lsp-ui-mode)
   :custom
   (lsp-ui-doc-position 'bottom))
-
-(use-package lsp-treemacs
-  :after lsp)
 
 (use-package lsp-ivy)
 
@@ -522,6 +522,8 @@
   :init (add-hook 'elixir-mode-hook 'exunit-mode))
 
 (add-to-list 'exec-path "~/.local/bin/elixir-lsp")
+
+(use-package go-mode)
 
 (use-package vterm
   :commands vterm
@@ -613,50 +615,61 @@
   (interactive)
   (org-timer-show-remaining-time))
 
+(global-set-key (kbd "<C-down>") 'shrink-window)
+(global-set-key (kbd "<C-up>") 'enlarge-window) 
+(global-set-key (kbd "<C-right>") 'shrink-window-horizontally)
+(global-set-key (kbd "<C-left>") 'enlarge-window-horizontally)  
+
+(use-package undo-tree
+:config
+(global-undo-tree-mode))
+
+(use-package yaml-mode)
+
 (use-package pdf-tools
-      :config
-      (pdf-tools-install)
-      (setq-default pdf-view-display-size 'fit-page)
-      (setq pdf-annot-activate-created-annotations t)
-      (define-key pdf-view-mode-map (kbd "C-s") 'isearch-forward)
-      (define-key pdf-view-mode-map (kbd "C-r") 'isearch-backward))
+  :config
+  (pdf-tools-install)
+  (setq-default pdf-view-display-size 'fit-page)
+  (setq pdf-annot-activate-created-annotations t)
+  (define-key pdf-view-mode-map (kbd "C-s") 'isearch-forward)
+  (define-key pdf-view-mode-map (kbd "C-r") 'isearch-backward))
 
-    (use-package auctex-latexmk
-      :config
-      (auctex-latexmk-setup)
-      (setq auctex-latexmk-inherit-TeX-PDF-mode t))
+(use-package auctex-latexmk
+  :config
+  (auctex-latexmk-setup)
+  (setq auctex-latexmk-inherit-TeX-PDF-mode t))
 
-    (use-package reftex
-      :defer t
-      :config
-      (setq reftex-cite-prompt-optional-args t)) ;; Prompt for empty optional arguments in cite
+(use-package reftex
+  :defer t
+  :config
+  (setq reftex-cite-prompt-optional-args t)) ;; Prompt for empty optional arguments in cite
 
-    (use-package auto-dictionary
-      :init(add-hook 'flyspell-mode-hook (lambda () (auto-dictionary-mode 1))))
+(use-package auto-dictionary
+  :init(add-hook 'flyspell-mode-hook (lambda () (auto-dictionary-mode 1))))
 
-    (use-package company-auctex
-      :init (company-auctex-init))
+(use-package company-auctex
+  :init (company-auctex-init))
 
-    (use-package tex
-      :ensure auctex
-      :mode ("\\.tex\\'" . latex-mode)
-      :config (progn
-                (setq TeX-source-correlate-mode t)
-                (setq TeX-source-correlate-method 'synctex)
-                (setq TeX-auto-save t)
-                (setq TeX-parse-self t)
-;;                (setq-default TeX-master "paper.tex")
-                (setq reftex-plug-into-AUCTeX t)
-                (pdf-tools-install)
-                (setq TeX-view-program-selection '((output-pdf "PDF Tools"))
-                      TeX-source-correlate-start-server t)
-                ;; Update PDF buffers after successful LaTeX runs
-                (add-hook 'TeX-after-compilation-finished-functions
-                          #'TeX-revert-document-buffer)
-                (add-hook 'LaTeX-mode-hook
-                          (lambda ()
-                            (reftex-mode t)
-                            (flyspell-mode t)))
-                ))
+(use-package tex
+  :ensure auctex
+  :mode ("\\.tex\\'" . latex-mode)
+  :config (progn
+            (setq TeX-source-correlate-mode t)
+            (setq TeX-source-correlate-method 'synctex)
+            (setq TeX-auto-save t)
+            (setq TeX-parse-self t)
+            ;;                (setq-default TeX-master "paper.tex")
+            (setq reftex-plug-into-AUCTeX t)
+            (pdf-tools-install)
+            (setq TeX-view-program-selection '((output-pdf "PDF Tools"))
+                  TeX-source-correlate-start-server t)
+            ;; Update PDF buffers after successful LaTeX runs
+            (add-hook 'TeX-after-compilation-finished-functions
+                      #'TeX-revert-document-buffer)
+            (add-hook 'LaTeX-mode-hook
+                      (lambda ()
+                        (reftex-mode t)
+                        (flyspell-mode t)))
+            ))
 
 (setq gc-cons-threshold (* 2 1000 1000))
