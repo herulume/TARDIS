@@ -67,10 +67,10 @@
                 dired-mode-hook))
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
-(set-face-attribute 'default nil :font "Fira Code Retina" :height herulume/default-font-size)
+(set-face-attribute 'default nil :font "Fira Code" :height herulume/default-font-size)
 
 ;; Set the fixed pitch face
-(set-face-attribute 'fixed-pitch nil :font "Fira Code Retina" :height herulume/default-font-size)
+(set-face-attribute 'fixed-pitch nil :font "Fira Code" :height herulume/default-font-size)
 
 ;; Set the variable pitch face
 (set-face-attribute 'variable-pitch nil :font "Cantarell" :height herulume/default-font-size :weight 'regular)
