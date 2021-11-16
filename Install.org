@@ -68,6 +68,16 @@ ln -sfT "$HOME/dev/TARDIS/bashrc" "$HOME/.bashrc"
 
 * Emacs
 
+** Create directory
+
+#+begin_src shell
+
+  [ ! -d "$HOME/.emacs.d/" ] && mkdir -p "$HOME/.emacs.d"
+
+#+end_src
+
+** Create directory
+
 #+begin_src shell
 
   ln -sfT "$HOME/dev/TARDIS/init.el" "$HOME/.emacs.d/init.el"
