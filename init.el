@@ -507,14 +507,15 @@
 
 (use-package yasnippet-snippets)
 
-(use-package agda2-mode
-  :config
-  (load-file (let ((coding-system-for-read 'utf-8))
-          (shell-command-to-string "agda-mode locate")))
-  (setq agda2-directory "/home/herulume/Downloads/Agda-nightly-data/emacs-mode/")
-  (setq agda2-program-args
-        (quote
-         ("+RTS" "-K256M" "-H6G" "-M6G" "-A128M" "-RTS"))))
+;;  (use-package agda2-mode
+;;    :config
+;;    (load-file (let ((coding-system-for-read 'utf-8))
+;;            (shell-command-to-string "agda-mode locate")))
+;;    (setq agda2-directory "/home/herulume/Downloads/Agda-nightly-data/emacs-mode/")
+;;    (setq agda2-program-args
+;;          (quote
+;;           ("+RTS" "-K256M" "-H6G" "-M6G" "-A128M" "-RTS"))))
+;;
 
 (use-package elixir-mode)
 
@@ -614,6 +615,11 @@
   "Show pomodoro timer"
   (interactive)
   (org-timer-show-remaining-time))
+
+(use-package exec-path-from-shell
+  :if (memq window-system '(mac ns))
+  :config
+  (exec-path-from-shell-initialize))
 
 (global-set-key (kbd "<C-down>") 'shrink-window)
 (global-set-key (kbd "<C-up>") 'enlarge-window) 
