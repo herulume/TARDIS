@@ -527,12 +527,15 @@
 (use-package go-mode)
 
 (use-package vterm
-  :commands vterm
-  :bind (("C-c t" . vterm))
-  :config
-  ;(setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *")  ;; Set this to match your custom shell prompt
-  (setq vterm-shell "bash")                       ;; Set this to customize the shell to launch
-  (setq vterm-max-scrollback 10000))
+    :commands vterm
+    :config
+    ;(setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *")  ;; Set this to match your custom shell prompt
+    (setq vterm-shell "bash")                       ;; Set this to customize the shell to launch
+    (setq vterm-max-scrollback 10000)
+    (setq vterm-kill-buffer-on-exit t))
+
+(use-package multi-vterm
+  :bind (("C-c t" . multi-vterm)))
 
 (use-package dired
   :ensure nil
@@ -615,6 +618,8 @@
   "Show pomodoro timer"
   (interactive)
   (org-timer-show-remaining-time))
+
+(use-package dockerfile-mode)
 
 (use-package exec-path-from-shell
   :if (memq window-system '(mac ns))
