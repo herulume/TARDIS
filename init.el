@@ -494,6 +494,7 @@
          ("<tab>" . company-complete-selection))
         (:map lsp-mode-map
          ("<tab>" . company-indent-or-complete-common))
+      :bind (("C-x C-j" . dired-jump))
   :custom
   (company-minimum-prefix-length 1)
   (company-idle-delay 0.0))
@@ -542,7 +543,10 @@
   :commands (dired dired-jump)
   :bind (("C-x C-j" . dired-jump))
   :custom ((dired-listing-switches "-agho --group-directories-first")
-           (dired-dwim-target t)))
+           (dired-dwim-target t))
+  :if (memq window-system '(mac ns))
+  :config
+  (setq insert-directory-program "gls" dired-use-ls-dired t))
 
 (use-package dired-single)
 
@@ -620,6 +624,12 @@
   (org-timer-show-remaining-time))
 
 (use-package dockerfile-mode)
+
+(when (memq window-system '(mac ns))
+  (setq mac-option-modifier nil
+        mac-right-command-modifier 'super
+        mac-command-modifier 'meta
+        x-select-enable-clipboard t))
 
 (use-package exec-path-from-shell
   :if (memq window-system '(mac ns))
