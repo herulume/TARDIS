@@ -46,7 +46,7 @@ Babel tangle files from the terminal.
 
 #+begin_src shell
 
-ln -sfT "$HOME/dev/TARDIS/bashrc" "$HOME/.bashrc"
+ln -sf "$HOME/dev/TARDIS/bashrc" "$HOME/.bashrc"
 
 #+end_src
 
@@ -54,7 +54,7 @@ ln -sfT "$HOME/dev/TARDIS/bashrc" "$HOME/.bashrc"
 
 #+begin_src shell
 
-  ln -sfT "$HOME/dev/TARDIS/bash_profile" "$HOME/.bash_profile"
+  ln -sf "$HOME/dev/TARDIS/bash_profile" "$HOME/.bash_profile"
 
 #+end_src 
 
@@ -62,15 +62,25 @@ ln -sfT "$HOME/dev/TARDIS/bashrc" "$HOME/.bashrc"
 
 #+begin_src shell
 
-  ln -sfT "$HOME/dev/TARDIS/git/gitconfig" "$HOME/.gitconfig"
+  ln -sf "$HOME/dev/TARDIS/git/gitconfig" "$HOME/.gitconfig"
 
 #+end_src
 
 * Emacs
 
+** Create directory
+
 #+begin_src shell
 
-  ln -sfT "$HOME/dev/TARDIS/init.el" "$HOME/.emacs.d/init.el"
+  [ ! -d "$HOME/.emacs.d/" ] && mkdir -p "$HOME/.emacs.d"
+
+#+end_src
+
+** Create directory
+
+#+begin_src shell
+
+  ln -sf "$HOME/dev/TARDIS/init.el" "$HOME/.emacs.d/init.el"
 
 #+end_src
 
@@ -80,7 +90,7 @@ ln -sfT "$HOME/dev/TARDIS/bashrc" "$HOME/.bashrc"
 
 #+begin_src shell
 
-  [ ! -d "$HOME/.local/bin/" ] && mkdir "$HOME/.local/bin"
+  [ ! -d "$HOME/.local/bin/" ] && mkdir -p "$HOME/.local/bin"
 
 #+end_src
 

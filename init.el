@@ -67,10 +67,15 @@
                 dired-mode-hook))
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
-(set-face-attribute 'default nil :font "Fira Code Retina" :height herulume/default-font-size)
+(global-set-key (kbd "<C-down>") 'shrink-window)
+(global-set-key (kbd "<C-up>") 'enlarge-window) 
+(global-set-key (kbd "<C-right>") 'shrink-window-horizontally)
+(global-set-key (kbd "<C-left>") 'enlarge-window-horizontally)
+
+(set-face-attribute 'default nil :font "Fira Code" :height herulume/default-font-size)
 
 ;; Set the fixed pitch face
-(set-face-attribute 'fixed-pitch nil :font "Fira Code Retina" :height herulume/default-font-size)
+(set-face-attribute 'fixed-pitch nil :font "Fira Code" :height herulume/default-font-size)
 
 ;; Set the variable pitch face
 (set-face-attribute 'variable-pitch nil :font "Cantarell" :height herulume/default-font-size :weight 'regular)
@@ -494,6 +499,7 @@
          ("<tab>" . company-complete-selection))
         (:map lsp-mode-map
          ("<tab>" . company-indent-or-complete-common))
+      :bind (("C-x C-j" . dired-jump))
   :custom
   (company-minimum-prefix-length 1)
   (company-idle-delay 0.0))
@@ -526,20 +532,30 @@
 
 (use-package go-mode)
 
+(use-package yaml-mode)
+
+(use-package dockerfile-mode)
+
 (use-package vterm
-  :commands vterm
-  :bind (("C-c t" . vterm))
-  :config
-  ;(setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *")  ;; Set this to match your custom shell prompt
-  (setq vterm-shell "bash")                       ;; Set this to customize the shell to launch
-  (setq vterm-max-scrollback 10000))
+    :commands vterm
+    :config
+    ;(setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *")  ;; Set this to match your custom shell prompt
+    (setq vterm-shell "bash")                       ;; Set this to customize the shell to launch
+    (setq vterm-max-scrollback 10000)
+    (setq vterm-kill-buffer-on-exit t))
+
+(use-package multi-vterm
+  :bind (("C-c t" . multi-vterm)))
 
 (use-package dired
   :ensure nil
   :commands (dired dired-jump)
   :bind (("C-x C-j" . dired-jump))
   :custom ((dired-listing-switches "-agho --group-directories-first")
-           (dired-dwim-target t)))
+           (dired-dwim-target t))
+  :if (memq window-system '(mac ns))
+  :config
+  (setq insert-directory-program "gls" dired-use-ls-dired t))
 
 (use-package dired-single)
 
@@ -616,21 +632,20 @@
   (interactive)
   (org-timer-show-remaining-time))
 
+(when (memq window-system '(mac ns))
+      (setq mac-option-modifier nil
+            mac-right-command-modifier 'super
+            mac-command-modifier 'meta
+            x-select-enable-clipboard t))
+
 (use-package exec-path-from-shell
   :if (memq window-system '(mac ns))
   :config
   (exec-path-from-shell-initialize))
 
-(global-set-key (kbd "<C-down>") 'shrink-window)
-(global-set-key (kbd "<C-up>") 'enlarge-window) 
-(global-set-key (kbd "<C-right>") 'shrink-window-horizontally)
-(global-set-key (kbd "<C-left>") 'enlarge-window-horizontally)  
-
 (use-package undo-tree
 :config
 (global-undo-tree-mode))
-
-(use-package yaml-mode)
 
 (use-package pdf-tools
   :config
