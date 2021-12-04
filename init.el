@@ -67,6 +67,11 @@
                 dired-mode-hook))
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
+(global-set-key (kbd "<C-down>") 'shrink-window)
+(global-set-key (kbd "<C-up>") 'enlarge-window) 
+(global-set-key (kbd "<C-right>") 'shrink-window-horizontally)
+(global-set-key (kbd "<C-left>") 'enlarge-window-horizontally)
+
 (set-face-attribute 'default nil :font "Fira Code" :height herulume/default-font-size)
 
 ;; Set the fixed pitch face
@@ -527,6 +532,10 @@
 
 (use-package go-mode)
 
+(use-package yaml-mode)
+
+(use-package dockerfile-mode)
+
 (use-package vterm
     :commands vterm
     :config
@@ -623,29 +632,20 @@
   (interactive)
   (org-timer-show-remaining-time))
 
-(use-package dockerfile-mode)
-
 (when (memq window-system '(mac ns))
-  (setq mac-option-modifier nil
-        mac-right-command-modifier 'super
-        mac-command-modifier 'meta
-        x-select-enable-clipboard t))
+      (setq mac-option-modifier nil
+            mac-right-command-modifier 'super
+            mac-command-modifier 'meta
+            x-select-enable-clipboard t))
 
 (use-package exec-path-from-shell
   :if (memq window-system '(mac ns))
   :config
   (exec-path-from-shell-initialize))
 
-(global-set-key (kbd "<C-down>") 'shrink-window)
-(global-set-key (kbd "<C-up>") 'enlarge-window) 
-(global-set-key (kbd "<C-right>") 'shrink-window-horizontally)
-(global-set-key (kbd "<C-left>") 'enlarge-window-horizontally)  
-
 (use-package undo-tree
 :config
 (global-undo-tree-mode))
-
-(use-package yaml-mode)
 
 (use-package pdf-tools
   :config
