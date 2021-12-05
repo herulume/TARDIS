@@ -60,6 +60,7 @@
 
 ;; Disable line numbers for some modes
 (dolist (mode '(org-mode-hook
+		 org-agenda-mode-hook
                 term-mode-hook
                 shell-mode-hook
                 vterm-mode-hook
@@ -492,6 +493,16 @@
 
 (use-package lsp-ivy)
 
+(use-package dap-mode
+  ;; :custom
+  ;; (dap-auto-configure-features '(sessions locals tooltip))
+  :commands dap-debug
+  :config
+  (dap-ui-mode 1)
+  ;; Set up Go debugging
+  (require 'dap-go)
+  (dap-go-setup))
+
 (use-package company
   :after lsp-mode
   :hook (lsp-mode . company-mode)
@@ -639,7 +650,6 @@
             x-select-enable-clipboard t))
 
 (use-package exec-path-from-shell
-  :if (memq window-system '(mac ns))
   :config
   (exec-path-from-shell-initialize))
 

@@ -106,6 +106,7 @@ Remove unneeded elements, add line and column numbers.
 
   ;; Disable line numbers for some modes
   (dolist (mode '(org-mode-hook
+		   org-agenda-mode-hook
                   term-mode-hook
                   shell-mode-hook
                   vterm-mode-hook
@@ -750,6 +751,23 @@ Try these commands with =M-x=:
 
 #+end_src
 
+
+** Dap-mode
+
+#+begin_src emacs-lisp
+
+  (use-package dap-mode
+    ;; :custom
+    ;; (dap-auto-configure-features '(sessions locals tooltip))
+    :commands dap-debug
+    :config
+    (dap-ui-mode 1)
+    ;; Set up Go debugging
+    (require 'dap-go)
+    (dap-go-setup))
+
+#+end_src
+
 ** Company Mode
 
 [[http://company-mode.github.io/][Company Mode]] provides a nicer in-buffer completion interface than =completion-at-point= which is more reminiscent of what you would expect from an IDE.  We add a simple configuration to make the keybindings a little more useful (=TAB= now completes the selection and initiates completion at the current location if needed).
@@ -1047,7 +1065,6 @@ Dired is a built-in file manager for Emacs that does some pretty amazing things!
               x-select-enable-clipboard t))
 
   (use-package exec-path-from-shell
-    :if (memq window-system '(mac ns))
     :config
     (exec-path-from-shell-initialize))
 
