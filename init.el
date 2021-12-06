@@ -524,15 +524,15 @@
 
 (use-package yasnippet-snippets)
 
-;;  (use-package agda2-mode
-;;    :config
-;;    (load-file (let ((coding-system-for-read 'utf-8))
-;;            (shell-command-to-string "agda-mode locate")))
-;;    (setq agda2-directory "/home/herulume/Downloads/Agda-nightly-data/emacs-mode/")
-;;    (setq agda2-program-args
-;;          (quote
-;;           ("+RTS" "-K256M" "-H6G" "-M6G" "-A128M" "-RTS"))))
-;;
+(use-package agda2-mode
+  :if (file-directory-p "/home/herulume/Downloads/Agda-nightly/data/emacs-mode")
+  :config
+  (load-file (let ((coding-system-for-read 'utf-8))
+          (shell-command-to-string "agda-mode locate")))
+  (setq agda2-directory "/home/herulume/Downloads/Agda-nightly/data/emacs-mode/")
+  (setq agda2-program-args
+        (quote
+         ("+RTS" "-K256M" "-H6G" "-M6G" "-A128M" "-RTS"))))
 
 (use-package elixir-mode)
 
