@@ -504,16 +504,17 @@
   (dap-go-setup))
 
 (use-package company
-  :after lsp-mode
-  :hook (lsp-mode . company-mode)
+  ;;      :after lsp-mode
+  ;;    :hook (lsp-mode . company-mode)
   :bind (:map company-active-map
-         ("<tab>" . company-complete-selection))
-        (:map lsp-mode-map
-         ("<tab>" . company-indent-or-complete-common))
-      :bind (("C-x C-j" . dired-jump))
+              ("<tab>" . company-complete-selection))
+  (:map lsp-mode-map
+        ("<tab>" . company-indent-or-complete-common))
+  :bind (("C-x C-j" . dired-jump))
   :custom
   (company-minimum-prefix-length 1)
-  (company-idle-delay 0.0))
+  (company-idle-delay 0.0)
+  (global-company-mode 1))
 
 (use-package company-box
   :hook (company-mode . company-box-mode))
@@ -652,6 +653,18 @@
 (use-package exec-path-from-shell
   :config
   (exec-path-from-shell-initialize))
+
+(use-package flyspell
+  :hook
+  (text-mode . flyspell-mode)
+  (prog-mode . flyspell-mode))
+
+(use-package flyspell-correct
+  :after flyspell
+  :bind (:map flyspell-mode-map ("C-;" . flyspell-correct-wrapper)))
+
+(use-package flyspell-correct-ivy
+  :after flyspell-correct)
 
 (use-package undo-tree
 :config
