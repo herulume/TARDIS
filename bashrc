@@ -24,14 +24,12 @@ fi
 alias g='git'
 alias god='git rebase -i --root'
 
-#alias ls='ls --color=auto'
-
- #alias grep='grep --colour=auto'
- #alias egrep='egrep --colour=auto'
-# alias fgrep='fgrep --colour=auto'
-
- alias rm='rm -i'
- alias mv='mv -i'
+alias cp='cp -iv'
+alias ls='ls -FG'
+alias ll='ls -FGlAhp'
+alias mv='mv -iv'
+alias rm='rm -iv'
+alias mv='mv -iv'
 
 up() { cd $(eval printf '../'%.0s {1..$1}) && pwd; }
 
