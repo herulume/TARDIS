@@ -9,18 +9,6 @@ done
 
 cp "./wallpaper.jpg" "$HOME/Pictures/Wallpapers/"
 
-ln -sf "$HOME/dev/TARDIS/bashrc" "$HOME/.bashrc"
-
-ln -sf "$HOME/dev/TARDIS/bash_profile" "$HOME/.bash_profile"
-
-ln -sf "$HOME/dev/TARDIS/git/gitconfig" "$HOME/.gitconfig"
-
 [ ! -d "$HOME/.emacs.d/" ] && mkdir -p "$HOME/.emacs.d"
 
 ln -sf "$HOME/dev/TARDIS/init.el" "$HOME/.emacs.d/init.el"
-
-[ ! -d "$HOME/.local/bin/" ] && mkdir -p "$HOME/.local/bin"
-
-cp "./utils/"* "$HOME/.local/bin"
-
-chmod +x "$HOME/.local/bin/"*
