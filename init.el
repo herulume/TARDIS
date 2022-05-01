@@ -138,23 +138,6 @@
   ([remap describe-variable] . counsel-describe-variable)
   ([remap describe-key] . helpful-key))
 
-(use-package dashboard
-  :config
-  (setq dashboard-startup-banner 2)
-  (setq dashboard-center-content t)
-  (setq dashboard-set-footer nil)
-  (setq dashboard-set-init-info nil)
-  (setq dashboard-banner-logo-title nil)
-  (setq dashboard-set-heading-icons t)
-  (setq dashboard-set-file-icons t)
-
-
-  (setq dashboard-items '((bookmarks . 5)
-                          (recents  . 5)
-                          (projects . 10)))
-
-  (dashboard-setup-startup-hook))
-
 (defun herulume/org-font-setup ()
   ;; Replace list hyphen with dot
   (font-lock-add-keywords 'org-mode
@@ -525,15 +508,15 @@
 
 (use-package yasnippet-snippets)
 
-(use-package agda2-mode
-  :if (file-directory-p "/home/herulume/Downloads/Agda-nightly/data/emacs-mode")
-  :config
-  (load-file (let ((coding-system-for-read 'utf-8))
-          (shell-command-to-string "agda-mode locate")))
-  (setq agda2-directory "/home/herulume/Downloads/Agda-nightly/data/emacs-mode/")
-  (setq agda2-program-args
-        (quote
-         ("+RTS" "-K256M" "-H6G" "-M6G" "-A128M" "-RTS"))))
+;;  (use-package agda2-mode
+;;    :if (file-directory-p "/home/herulume/Downloads/Agda-nightly/data/emacs-mode")
+;;    :config
+;;    (load-file (let ((coding-system-for-read 'utf-8))
+;;            (shell-command-to-string "agda-mode locate")))
+;;    (setq agda2-directory "/home/herulume/Downloads/Agda-nightly/data/emacs-mode/")
+;;    (setq agda2-program-args
+;;          (quote
+;;           ("+RTS" "-K256M" "-H6G" "-M6G" "-A128M" "-RTS"))))
 
 (use-package elixir-mode)
 
@@ -678,42 +661,7 @@
   (define-key pdf-view-mode-map (kbd "C-s") 'isearch-forward)
   (define-key pdf-view-mode-map (kbd "C-r") 'isearch-backward))
 
-(use-package auctex-latexmk
-  :config
-  (auctex-latexmk-setup)
-  (setq auctex-latexmk-inherit-TeX-PDF-mode t))
-
-(use-package reftex
-  :defer t
-  :config
-  (setq reftex-cite-prompt-optional-args t)) ;; Prompt for empty optional arguments in cite
-
 (use-package auto-dictionary
   :init(add-hook 'flyspell-mode-hook (lambda () (auto-dictionary-mode 1))))
-
-(use-package company-auctex
-  :init (company-auctex-init))
-
-(use-package tex
-  :ensure auctex
-  :mode ("\\.tex\\'" . latex-mode)
-  :config (progn
-            (setq TeX-source-correlate-mode t)
-            (setq TeX-source-correlate-method 'synctex)
-            (setq TeX-auto-save t)
-            (setq TeX-parse-self t)
-            ;;                (setq-default TeX-master "paper.tex")
-            (setq reftex-plug-into-AUCTeX t)
-            (pdf-tools-install)
-            (setq TeX-view-program-selection '((output-pdf "PDF Tools"))
-                  TeX-source-correlate-start-server t)
-            ;; Update PDF buffers after successful LaTeX runs
-            (add-hook 'TeX-after-compilation-finished-functions
-                      #'TeX-revert-document-buffer)
-            (add-hook 'LaTeX-mode-hook
-                      (lambda ()
-                        (reftex-mode t)
-                        (flyspell-mode t)))
-            ))
 
 (setq gc-cons-threshold (* 2 1000 1000))
