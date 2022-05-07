@@ -63,7 +63,6 @@
 		 org-agenda-mode-hook
                 term-mode-hook
                 shell-mode-hook
-                vterm-mode-hook
                 eshell-mode-hook
                 dired-mode-hook))
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
@@ -530,17 +529,6 @@
 (use-package yaml-mode)
 
 (use-package dockerfile-mode)
-
-(use-package vterm
-    :commands vterm
-    :config
-    ;(setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *")  ;; Set this to match your custom shell prompt
-    (setq vterm-shell "bash")                       ;; Set this to customize the shell to launch
-    (setq vterm-max-scrollback 10000)
-    (setq vterm-kill-buffer-on-exit t))
-
-(use-package multi-vterm
-  :bind (("C-c t" . multi-vterm)))
 
 (use-package dired
   :ensure nil
