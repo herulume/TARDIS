@@ -1,14 +1,6 @@
 #+title: Install script
 #+PROPERTY: header-args :shell :tangle ./install :mkdirp yes
 
-* SH env
-
-#+begin_src shell
-
-  #!/bin/bash
-
-#+end_src
-
 * Tangle files
 
 Babel tangle files from the terminal.

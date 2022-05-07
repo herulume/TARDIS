@@ -522,8 +522,6 @@
 (use-package exunit
   :init (add-hook 'elixir-mode-hook 'exunit-mode))
 
-(add-to-list 'exec-path "~/.local/bin/elixir-lsp")
-
 (use-package go-mode)
 
 (use-package yaml-mode)
