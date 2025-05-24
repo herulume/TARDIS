@@ -813,11 +813,11 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
 
 #+end_src
 
-*** Go
+*** Rust
 
 #+begin_src emacs-lisp
 
-  (use-package go-mode)
+  (use-package rust-mode)
 
 #+end_src
 
@@ -938,25 +938,29 @@ Dired is a built-in file manager for Emacs that does some pretty amazing things!
 
 #+begin_src emacs-lisp
 
-  (defun herulume/margo ()
-    "i'M A biG BelIEVer iN ranDoM caPitALIZaTION."
-    (interactive)
-    (let ((i 0)
-          (return-string "")
-          (input (buffer-substring-no-properties (point-min) (point-max))))
-      (while (< i (- (point-max) (point-min)))
-        (let ((current-char (substring input i (+ i 1))))
-          (if (= (random 2) 0)
-              (setq return-string
-                    (concat return-string (upcase current-char)))
-            (setq return-string
-                  (concat return-string (downcase current-char)))))
-        (setq i (+ i 1)))
-      (let ((l (point)))
-        (delete-region (point-min) (point-max))
-        (insert return-string)
-        (goto-char l))))
-
+    (require 'cl-lib)
+    (defun herulume/margo (start end)
+      "i'M A biG BelIEVer iN ranDoM caPitALIZaTION."
+      (interactive
+       (if (use-region-p)
+           (list (region-beginning) (region-end))
+         (list (point-min) (point-max))))
+      (save-excursion
+        (let* ((text (buffer-substring-no-properties start end))
+               (random-text
+                (apply #'string
+                       (cl-loop for char across text
+                                collect
+                                (if (eq (char-syntax char) ?w)
+                                    ;; only randomize letters
+                                    (if (zerop (random 2))
+                                        (upcase char)
+                                      (downcase char))
+                                  char)))))
+          (delete-region start end)
+          (goto-char start)
+          (insert random-text))))
+  
 #+end_src
 
 ** Pomodoro
