@@ -14,24 +14,6 @@ Babel tangle files from the terminal.
 
 #+end_src
 
-* Wallpaper
-
-** Create directory
-
-#+begin_src shell
-
-  [ ! -d "$HOME/Pictures/Wallpapers/" ] && mkdir -p "$HOME/Pictures/Wallpapers"
-
-#+end_src
-
-** Copy wallpaper
-
-#+begin_src shell
-
-  cp "./wallpaper.jpg" "$HOME/Pictures/Wallpapers/"
-
-#+end_src
-
 * Emacs
 
 ** Create directory
