@@ -1,8 +1,19 @@
-;;; pre-early-init.el --- run before early-init -*- no-byte-compile: t; lexical-binding: t; -*-
+#+title: pre-early-init
+#+PROPERTY: header-args:emacs-lisp :lexical t :tangle ./pre-early-init.el :mkdirp yes
 
+* Header
+#+begin_src emacs-lisp
+;;; pre-early-init.el --- run before early-init -*- no-byte-compile: t; lexical-binding: t; -*- 
+#+end_src
+
+* Debug on
+#+begin_src emacs-lisp
 ;; Debug
 (setq debug-on-error t)
+#+end_src
 
+* Display startup time
+#+begin_src emacs-lisp
 ;; Display startup time
 (defun display-startup-time ()
   "Display the startup time and number of garbage collections."
@@ -12,12 +23,19 @@
            gcs-done))
 
 (add-hook 'emacs-startup-hook #'display-startup-time 100)
+#+end_src
 
+* Reduce ~/.emacs.d clutter
+#+begin_src emacs-lisp
 ;; Reducing clutter in ~/.emacs.d by redirecting files to ~/.emacs.d/var/
 ;; IMPORTANT: This part should be in the pre-early-init.el file
 (setq minimal-emacs-var-dir (expand-file-name "var/" minimal-emacs-user-directory))
 (setq package-user-dir (expand-file-name "elpa" minimal-emacs-var-dir))
 (setq user-emacs-directory minimal-emacs-var-dir)
+#+end_src
 
+* Disable package.el for Elpaca
+#+begin_src emacs-lisp
 ;; Elpaca
 (setq minimal-emacs-package-initialize-and-refresh nil)
+#+end_src

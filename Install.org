@@ -1,17 +1,20 @@
 #+title: Install script
-#+PROPERTY: header-args :shell :tangle ./install :mkdirp yes
+#+PROPERTY: header-args :shell :tangle ./install.sh :mkdirp yes lexical: t
+
+* Shebang
+#+begin_src shell
+#! /bin/sh
+#+end_src
 
 * Tangle files
 
 Babel tangle files from the terminal.
 
 #+begin_src shell
-
-  for i in *.org; do
-      [ -f "$i" ] || break
-      emacs --batch --eval "(require 'org)" --eval "(org-babel-tangle-file \"$i\")"
-  done
-
+for i in *.org; do
+    [ -f "$i" ] || break
+    emacs --batch --eval "(require 'org)" --eval "(org-babel-tangle-file \"$i\")"
+done
 #+end_src
 
 * Emacs
@@ -19,15 +22,13 @@ Babel tangle files from the terminal.
 ** Create directory
 
 #+begin_src shell
-
-  [ ! -d "$HOME/.emacs.d/" ] && mkdir -p "$HOME/.emacs.d"
-
+[ ! -d "$HOME/.emacs.d/" ] && git clone "https://github.com/jamescherti/minimal-emacs.d" "$HOME/.emacs.d"
 #+end_src
 
 ** Create directory
 
 #+begin_src shell
-
-  ln -sf "$HOME/dev/TARDIS/init.el" "$HOME/.emacs.d/init.el"
-
+ln -sf "$HOME/dev/TARDIS/pre-early-init.el" "$HOME/.emacs.d/pre-early-init.el"
+ln -sf "$HOME/dev/TARDIS/pre-init.el" "$HOME/.emacs.d/pre-init.el"
+ln -sf "$HOME/dev/TARDIS/post-init.el" "$HOME/.emacs.d/post-init.el"
 #+end_src

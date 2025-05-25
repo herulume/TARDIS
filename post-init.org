@@ -1,5 +1,13 @@
-;;; post-init.el --- run after init.el -*- no-byte-compile: t; lexical-binding: t; -*-
+#+title: post-init
+#+PROPERTY: header-args:emacs-lisp :lexical t :tangle ./post-init.el :mkdirp yes
 
+* Header
+#+begin_src emacs-lisp
+;;; post-init.el --- run after init.el -*- no-byte-compile: t; lexical-binding: t; -*-
+#+end_src
+
+* Compile Angel
+#+begin_src emacs-lisp
 ;; Ensure adding the following compile-angel code at the very beginning
 ;; of your `~/.emacs.d/post-init.el` file, before all other packages.
 (use-package compile-angel
@@ -29,12 +37,18 @@
 
   ;; A global mode that compiles .el files before they are loaded.
   (compile-angel-on-load-mode))
+#+end_src
 
+* Update buffers to reflect file changes
+#+begin_src emacs-lisp
 ;; Auto-revert in Emacs is a feature that automatically updates the
 ;; contents of a buffer to reflect changes made to the underlying file
 ;; on disk.
 (add-hook 'after-init-hook #'global-auto-revert-mode)
+#+end_src
 
+* recentf
+#+begin_src emacs-lisp
 ;; recentf is an Emacs package that maintains a list of recently
 ;; accessed files, making it easier to reopen files you have worked on
 ;; recently.
@@ -42,32 +56,48 @@
                                (let ((inhibit-message t))
                                  (recentf-mode 1))))
 (add-hook 'kill-emacs-hook #'recentf-cleanup)
+#+end_src
 
+* savehist
+#+begin_src emacs-lisp
 ;; savehist is an Emacs feature that preserves the minibuffer history between
 ;; sessions. It saves the history of inputs in the minibuffer, such as commands,
 ;; search strings, and other prompts, to a file. This allows users to retain
 ;; their minibuffer history across Emacs restarts.
 (add-hook 'after-init-hook #'savehist-mode)
+#+end_src
 
+* Remember last file location upon reopening
+#+begin_src emacs-lisp
 ;; save-place-mode enables Emacs to remember the last location within a file
 ;; upon reopening. This feature is particularly beneficial for resuming work at
 ;; the precise point where you previously left off.
 (add-hook 'after-init-hook #'save-place-mode)
+#+end_src
 
+* Remove mouse support
+#+begin_src emacs-lisp
+;; Remove mouse support
 (use-package inhibit-mouse
   :ensure t
   :config
   (if (daemonp)
       (add-hook 'server-after-make-frame-hook #'inhibit-mouse-mode)
     (inhibit-mouse-mode 1)))
+#+end_src
 
+* Magit
+#+begin_src emacs-lisp
 ;; Magit
-;; Needs compst and transient in this order due to a bug.
+;; Needs compat and transient in this order due to a bug.
 (use-package compat)
 (use-package transient)
 (use-package magit :after compat)
+#+end_src
 
-;; Strip whitespace
+* Strip white-space
+#+begin_src emacs-lisp
+;; Strip white-space
 (use-package stripspace
   :ensure t
   :defer t
@@ -92,7 +122,10 @@
   ;; saved file, the cursor remains in the same position, ensuring a consistent
   ;; editing experience without affecting cursor placement.
   (stripspace-restore-column t))
+#+end_src
 
+* Better undo
+#+begin_src emacs-lisp
 ;; The undo-fu package is a lightweight wrapper around Emacs' built-in undo
 ;; system, providing more convenient undo/redo functionality.
 (use-package undo-fu
@@ -112,7 +145,10 @@
   :defer t
   :commands undo-fu-session-global-mode
   :hook (after-init . undo-fu-session-global-mode))
+#+end_src
 
+* Spell checker
+#+begin_src emacs-lisp
 ;; Spell checker
 (use-package ispell
   :ensure nil
@@ -149,7 +185,10 @@
   ;; Remove doc from Flyspell
   (setq flyspell-prog-text-faces (delq 'font-lock-doc-face
                                        flyspell-prog-text-faces)))
+#+end_src
 
+* Completion
+#+begin_src emacs-lisp
 ;; Code completion
 (use-package corfu
   :ensure t
@@ -321,7 +360,10 @@
    ;; :preview-key "M-."
    :preview-key '(:debounce 0.4 any))
   (setq consult-narrow-key "<"))
+#+end_src
 
+* LSP
+#+begin_src emacs-lisp
 ;; LSP
 (use-package eglot
   :ensure nil
@@ -330,7 +372,10 @@
              eglot-ensure
              eglot-rename
              eglot-format-buffer))
+#+end_src
 
+* Rust
+#+begin_src emacs-lisp
 ;; Rust
 (use-package rust-mode
   :ensure t
@@ -338,11 +383,15 @@
   ;;(setq rust-mode-treesitter-derive t)
   :hook
   (rust-mode . eglot-ensure))
+
 (use-package cargo
   :ensure t
   :hook
   (rust-mode . cargo-minor-mode))
+#+end_src
 
+* ELisp
+#+begin_src emacs-lisp
 ;; Elisp
 
 ;; Enables automatic indentation of code while typing
@@ -390,8 +439,10 @@
              elisp-refs-variable
              elisp-refs-special
              elisp-refs-symbol))
+#+end_src
 
-
+* Memes
+#+begin_src emacs-lisp
 ;; Memes
 
 (use-package nyan-mode :ensure t)
@@ -404,10 +455,40 @@
   :ensure t
   :init
   (setq zoom-mode t))
+#+end_src
 
+* Theme
+#+begin_src emacs-lisp
 ;; Dracula theme
 (mapc #'disable-theme custom-enabled-themes)  ; Disable all active themes
 (use-package dracula-theme
   :ensure t
   :config
   (load-theme 'dracula :noconfirm))
+#+end_src
+
+* Margo
+#+begin_src emacs-lisp
+(require 'cl-lib)
+(defun herulume/margo (start end)
+  "i'M A biG BelIEVer iN ranDoM caPitALIZaTION."
+  (interactive
+   (if (use-region-p)
+       (list (region-beginning) (region-end))
+     (list (point-min) (point-max))))
+  (save-excursion
+    (let* ((text (buffer-substring-no-properties start end))
+           (random-text
+            (apply #'string
+                   (cl-loop for char across text
+                            collect
+                            (if (eq (char-syntax char) ?w)
+                                ;; only randomize letters
+                                (if (zerop (random 2))
+                                    (upcase char)
+                                  (downcase char))
+                              char)))))
+      (delete-region start end)
+      (goto-char start)
+      (insert random-text))))
+#+end_src
