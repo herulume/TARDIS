@@ -124,29 +124,6 @@
   (stripspace-restore-column t))
 #+end_src
 
-* Better undo
-#+begin_src emacs-lisp
-;; The undo-fu package is a lightweight wrapper around Emacs' built-in undo
-;; system, providing more convenient undo/redo functionality.
-(use-package undo-fu
-  :defer t
-  :commands (undo-fu-only-undo
-             undo-fu-only-redo
-             undo-fu-only-redo-all
-             undo-fu-disable-checkpoint)
-  :config
-  (global-unset-key (kbd "C-z"))
-  (global-set-key (kbd "C-z") 'undo-fu-only-undo)
-  (global-set-key (kbd "C-S-z") 'undo-fu-only-redo))
-
-;; The undo-fu-session package complements undo-fu by enabling the saving
-;; and restoration of undo history across Emacs sessions, even after restarting.
-(use-package undo-fu-session
-  :defer t
-  :commands undo-fu-session-global-mode
-  :hook (after-init . undo-fu-session-global-mode))
-#+end_src
-
 * Spell checker
 #+begin_src emacs-lisp
 ;; Spell checker
@@ -162,7 +139,7 @@
   ;; aggressive and detailed suggestions for misspelled words. The language
   ;; is set to "en_US" for US English, which can be replaced with your desired
   ;; language code (e.g., "en_GB" for British English, "de_DE" for German).
-  (ispell-extra-args '("--sug-mode=ultra" "--lang=en_US")))
+  (ispell-extra-args '("--sug-mode=ultra" "--lang=en_GB")))
 
 ;; On-the-fly spell checking
 (use-package flyspell
@@ -374,22 +351,6 @@
              eglot-format-buffer))
 #+end_src
 
-* Rust
-#+begin_src emacs-lisp
-;; Rust
-(use-package rust-mode
-  :ensure t
-  ;;:init
-  ;;(setq rust-mode-treesitter-derive t)
-  :hook
-  (rust-mode . eglot-ensure))
-
-(use-package cargo
-  :ensure t
-  :hook
-  (rust-mode . cargo-minor-mode))
-#+end_src
-
 * ELisp
 #+begin_src emacs-lisp
 ;; Elisp
@@ -441,6 +402,65 @@
              elisp-refs-symbol))
 #+end_src
 
+* Rust
+#+begin_src emacs-lisp
+;; Rust
+(use-package rust-mode
+  :ensure t
+  ;;:init
+  ;;(setq rust-mode-treesitter-derive t)
+  :hook
+  (rust-mode . eglot-ensure))
+
+(use-package cargo
+  :ensure t
+  :hook
+  (rust-mode . cargo-minor-mode))
+#+end_src
+
+* Prolog
+#+begin_src emacs-lisp
+(use-package prolog-mode
+  :ensure t
+  :config
+  (setq prolog-system 'swi
+      prolog-program-switches '((swi ("-G128M" "-T128M" "-L128M" "-O"))
+                                (t nil))
+      prolog-electric-if-then-else-flag t))
+
+(defun prolog-insert-comment-block ()
+  "Insert a PceEmacs-style comment block like /* - - ... - - */ "
+  (interactive)
+  (let ((dashes "-"))
+    (dotimes (_ 36) (setq dashes (concat "- " dashes)))
+    (insert (format "/* %s\n\n%s */" dashes dashes))
+    (forward-line -1)
+    (indent-for-tab-command)))
+
+(global-set-key "\C-cq" 'prolog-insert-comment-block)
+
+(global-set-key "\C-cl" (lambda ()
+                          (interactive)
+                          (insert ":- use_module(library()).")
+                          (forward-char -3)))
+
+(use-package ediprolog
+  :ensure t
+  :config
+  (setq ediprolog-system 'swi)
+  (global-set-key "\C-c\C-e" 'ediprolog-dwim))
+#+end_src
+
+* Buffer terminator
+#+begin_src emacs-lisp
+(use-package buffer-terminator
+  :ensure t
+  :custom
+  (buffer-terminator-verbose nil)
+  :config
+  (buffer-terminator-mode 1))
+#+end_src
+
 * Memes
 #+begin_src emacs-lisp
 ;; Memes
@@ -455,6 +475,12 @@
   :ensure t
   :init
   (setq zoom-mode t))
+
+(use-package eat
+  :ensure t)
+
+(setq confirm-kill-emacs 'y-or-n-p)
+(use-package eat :ensure t)
 #+end_src
 
 * Theme
