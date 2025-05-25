@@ -24,6 +24,9 @@ This file generates [[file:init.el][init.el]] which can be loaded by Emacs at st
   (defvar herulume/default-font-size 130)
   (defvar herulume/default-variable-font-size 130)
 
+  (setq inhibit-splash-screen t)
+  (switch-to-buffer "*scratch*")
+ 
 #+end_src
 
 * Package System Setup

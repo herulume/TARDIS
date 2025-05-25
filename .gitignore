@@ -1,2 +1,10 @@
-init.el
-install
+*
+!Emacs.org.old
+!Install.org
+!post-init.org
+!pre-init.org
+!post-early-init.org
+!pre-early-init.org
+!run.sh
+!README.md
+!LICENSE
