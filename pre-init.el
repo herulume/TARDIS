@@ -43,3 +43,8 @@
 (elpaca elpaca-use-package
   ;; Enable use-package :ensure support for Elpaca.
   (elpaca-use-package-mode))
+
+;; Relative line numbers in prog mode
+(add-hook 'prog-mode-hook (lambda ()
+                            (setq display-line-numbers-type 'relative)
+                            (display-line-numbers-mode)))
