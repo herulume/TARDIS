@@ -458,26 +458,38 @@ Install [clangd](https://clangd.llvm.org/installation.html).
   (buffer-terminator-mode 1))
 #+end_src
 
-* Memes
+* Nyan nyan nyan
 #+begin_src emacs-lisp
 ;; Memes
+(use-package nyan-mode
+  :ensure t
+  :init
+  (setq nyan-mode t))
 
-(use-package nyan-mode :ensure t)
 (use-package zone-nyan
   :ensure t
   :config
   (setq zone-programs [zone-nyan]))
+#+end_src
 
+* Balance windows
+#+begin_src emacs-lisp
 (use-package zoom
   :ensure t
   :init
   (setq zoom-mode t))
+#+end_src
 
+* Terminal
+#+begin_src emacs-lisp
 (use-package eat
   :ensure t)
+#+end_src
 
+* Confirm to quit
+#+begin_src emacs-lisp
+;; C-a C-x C-c
 (setq confirm-kill-emacs 'y-or-n-p)
-(use-package eat :ensure t)
 #+end_src
 
 * Theme
