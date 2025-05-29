@@ -8,3 +8,8 @@
 !run.sh
 !README.md
 !LICENSE
+!templates/
+!templates/**
+
+
+
