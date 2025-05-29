@@ -1,7 +1,7 @@
 #+title: post-init
 #+PROPERTY: header-args:emacs-lisp :lexical t :tangle ./post-init.el :mkdirp yes
 
-# Time-stamp: <Last changed 2025-05-29 16:32:04>
+# Time-stamp: <Last changed 2025-05-29 22:03:51>
 
 * Header
 #+begin_src emacs-lisp
@@ -475,7 +475,7 @@ Install [clangd](https://clangd.llvm.org/installation.html).
 #+end_src
 
 * Org
-:D I love org-mode.
+:D I love org-mode. https://orgmode.org/worg/org-tutorials/encrypting-files.html
 #+begin_src emacs-lisp
 (use-package org
   :ensure t
@@ -493,11 +493,70 @@ Install [clangd](https://clangd.llvm.org/installation.html).
   (org-fontify-todo-headline t)
   (org-fontify-whole-heading-line t)
   (org-fontify-quote-and-verse-blocks t)
-  (org-agenda-files '("~/org"))
+  ;; Agends and life organisation
+  (org-agenda-files '("~/org/private.org")) ;; Default to private life
+  (org-log-into-drawer t)
+  (org-log-reschedule 'note)
+  (org-enforce-todo-dependencies t)
+  (org-track-ordered-property-with-tag t)
+  (org-agenda-dim-blocked-tasks t)
+  (org-enforce-todo-checkbox-dependencies t)
+  (org-clock-into-drawer "CLOCKING")
+  :config
+  (set-face-attribute 'org-column nil
+                      :inherit 'default)
+  (push '("w" "Work") org-capture-templates)
+  (push '("wt" "Work TODO task"
+          entry
+          (file+headline "~/org/work.org" "Capture")
+          (file "~/org/templates/tpl-todo.txt"))
+        org-capture-templates)
+  (push '("p" "Private life") org-capture-templates)
+  (push '("pt" "Private TODO task"
+          entry
+          (file+headline "~/org/private.org" "Capture")
+          (file "~/org/templates/tpl-todo.txt"))
+        org-capture-templates)
+  (push '("pj" "Journal entry"
+          entry
+          (file+olp+datetree "~/org/journal.org") "* %U - %^{Activity}")
+          org-capture-templates)
+  (push '("pb" "Add book to read"
+          entry
+          (file+headline "~/org/private.org" "Books to read")
+          (file "~/org/templates/tpl-book.txt")
+          :empty-lines-after 2)
+        org-capture-templates)
   :bind
-  ("\C-ca" . 'org-agenda))
-#+end_src
+  ("\C-ca" . 'org-agenda)
+  ("<f6>" . 'org-capture))
 
+;; Functions to help focus
+(defun herulume/org-focus-private()
+  "Set focus on private things."
+  (interactive)
+  (setq org-agenda-files '("~/org/private.org")))
+
+(defun herulume/org-focus-work()
+  "Set focus on work things."
+  (interactive)
+  (setq org-agenda-files '("~/org/work.org")))
+
+(defun herulume/org-focus-all()
+  "Set focus on all things."
+  (interactive)
+  (setq org-agenda-files '("~/org/work.org" "~/org/private.org")))
+#+end_src
+** Mylife headers
+Thanks to [Rainer König](https://www.udemy.com/course/getting-yourself-organized-with-org-mode)
+#+begin_src
+#+SEQ_TODO: REPEAT(r) NEXT(n@/!) TODO(t@/!) WAITING(w@/!) SOMEDAY(s@/!) PROJ(p) | DONE(d@) CANCELLED(c@)
+#+STARTUP: nologrepeat logdrawer lognotereschedule
+#+TAGS: PHONE(o) COMPUTER(c) SHOPPING(s) URGENT(u)
+#+ARCHIVE: %s_archive::
+#+COLUMNS: %58ITEM(Details) %7TODO %Effort(Estimation){:} %6CLOCKSUM(Actual)
+#+PROPERTY: Effort_ALL 0:10 0:20 0:30 1:00 2:00 4:00 6:00 8:00
+#+end_src
 
 * Olivetii
 Nice writing environment.
