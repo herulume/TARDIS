@@ -1,6 +1,8 @@
 #+title: post-init
 #+PROPERTY: header-args:emacs-lisp :lexical t :tangle ./post-init.el :mkdirp yes
 
+# Time-stamp: <Last changed 2025-05-29 16:32:04>
+
 * Header
 #+begin_src emacs-lisp
 ;;; post-init.el --- run after init.el -*- no-byte-compile: t; lexical-binding: t; -*-
@@ -458,20 +460,6 @@ Install [clangd](https://clangd.llvm.org/installation.html).
   (buffer-terminator-mode 1))
 #+end_src
 
-* Nyan nyan nyan
-#+begin_src emacs-lisp
-;; Memes
-(use-package nyan-mode
-  :ensure t
-  :init
-  (setq nyan-mode t))
-
-(use-package zone-nyan
-  :ensure t
-  :config
-  (setq zone-programs [zone-nyan]))
-#+end_src
-
 * Balance windows
 #+begin_src emacs-lisp
 (use-package zoom
@@ -486,10 +474,63 @@ Install [clangd](https://clangd.llvm.org/installation.html).
   :ensure t)
 #+end_src
 
+* Org
+:D I love org-mode.
+#+begin_src emacs-lisp
+(use-package org
+  :ensure t
+  :defer t
+  :commands (org-mode org-version)
+  :mode
+  ("\\.org\\'" . org-mode)
+  :custom
+  (org-hide-leading-stars t)
+  (org-startup-indented t)
+  (org-adapt-indentation nil)
+  (org-edit-src-content-indentation 0)
+  (org-startup-truncated t)
+  (org-fontify-done-headline t)
+  (org-fontify-todo-headline t)
+  (org-fontify-whole-heading-line t)
+  (org-fontify-quote-and-verse-blocks t)
+  (org-agenda-files '("~/org"))
+  :bind
+  ("\C-ca" . 'org-agenda))
+#+end_src
+
+
+* Olivetii
+Nice writing environment.
+#+begin_src emacs-lisp
+(use-package olivetti
+  :ensure t)
+#+end_src
+
+* Calendar
+#+begin_src emacs-lisp
+;; First day of the week: 0:Sunday, 1:Monday.
+(defvar calendar-week-start-day 1)
+
+;; Use European date format (DD/MM/YYYY or 9 October 2024).
+(defvar calendar-date-style 'european)
+#+end_src
+
 * Confirm to quit
 #+begin_src emacs-lisp
 ;; C-a C-x C-c
 (setq confirm-kill-emacs 'y-or-n-p)
+#+end_src
+
+* Timestamp
+#+begin_src emacs-lisp
+;; When there is a "Time-stamp: <>" string in the first 10 lines of the file,
+;; Emacs will write time-stamp information there when saving the file.
+;; (Borrowed from http://home.thep.lu.se/~karlf/emacs.html)
+;; (And https://olddeuteronomy.github.io/post/emacs-time-stamp/)
+(setq time-stamp-active t          ; Do enable time-stamps.
+      time-stamp-line-limit 10     ; Check first 10 buffer lines for Time-stamp: <>
+      time-stamp-format "Last changed %Y-%02m-%02d %02H:%02M:%02S")
+(add-hook 'write-file-hooks 'time-stamp) ; Update when saving.
 #+end_src
 
 * Theme
@@ -526,4 +567,17 @@ Install [clangd](https://clangd.llvm.org/installation.html).
       (delete-region start end)
       (goto-char start)
       (insert random-text))))
+#+end_src
+
+* Kill all buffers
+Execute Order 66
+#+begin_src emacs-lisp
+(defun herulume/execute-order-66 ()
+  "Kill all buffers, leaving *scratch* only."
+  (interactive)
+  (mapc
+   (lambda (buffer)
+     (kill-buffer buffer))
+   (buffer-list))
+  (delete-other-windows))
 #+end_src
