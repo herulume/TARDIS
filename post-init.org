@@ -1,7 +1,7 @@
 #+title: post-init
 #+PROPERTY: header-args:emacs-lisp :lexical t :tangle ./post-init.el :mkdirp yes
 
-# Time-stamp: <Last changed 2025-05-29 22:03:51>
+# Time-stamp: <Last changed 2025-05-31 00:03:32>
 
 * Header
 #+begin_src emacs-lisp
@@ -476,6 +476,7 @@ Install [clangd](https://clangd.llvm.org/installation.html).
 
 * Org
 :D I love org-mode. https://orgmode.org/worg/org-tutorials/encrypting-files.html
+Huge thanks to Rainer König.
 #+begin_src emacs-lisp
 (use-package org
   :ensure t
@@ -493,6 +494,8 @@ Install [clangd](https://clangd.llvm.org/installation.html).
   (org-fontify-todo-headline t)
   (org-fontify-whole-heading-line t)
   (org-fontify-quote-and-verse-blocks t)
+  ;; Align tags on my screen
+  (org-tags-column 0)
   ;; Agends and life organisation
   (org-agenda-files '("~/org/private.org")) ;; Default to private life
   (org-log-into-drawer t)
@@ -502,34 +505,95 @@ Install [clangd](https://clangd.llvm.org/installation.html).
   (org-agenda-dim-blocked-tasks t)
   (org-enforce-todo-checkbox-dependencies t)
   (org-clock-into-drawer "CLOCKING")
+  (org-agenda-custom-commands
+   (quote
+    (
+     ("A" . "Agendas")
+     ("AT" "Daily overview"
+      ((tags-todo "URGENT"
+                  ((org-agenda-overriding-header "Urgent Tasks")))
+       (tags-todo "RADAR"
+                  ((org-agenda-overriding-header "On my radar")))
+       (tags-todo "PHONE+TODO=\"NEXT\""
+                  ((org-agenda-overriding-header "Phone Calls")))
+       (tags-todo "Depth=\"Deep\"/NEXT"
+                  ((org-agenda-overriding-header "Next Actions requiring deep work")))
+       (agenda ""
+               ((org-agenda-overriding-header "Today")
+                (org-agenda-span 1)
+                (org-agenda-sorting-strategy
+                 (quote
+                  (time-up priority-down)))))
+       nil nil))
+     ("AW" "Weekly overview" agenda ""
+      ((org-agenda-overriding-header "Weekly overview")))
+     ("AM" "Monthly overview" agenda ""
+      ((org-agenda-overriding-header "Monthly overview"))
+      (org-agenda-span
+       (quote month))
+      (org-deadline-warning-days 0)
+      (org-agenda-sorting-strategy
+       (quote
+        (time-up priority-down tag-up))))
+     ("W" . "Weekly Review Helper")
+     ("Wn" "New tasks" tags "NEW"
+      ((org-agenda-overriding-header "NEW Tasks")))
+     ("Wd" "Check DELEGATED tasks" todo "DELEGATED"
+      ((org-agenda-overriding-header "DELEGATED tasks")))
+     ("Ww" "Check WAITING tasks" todo "WAITING"
+      ((org-agenda-overriding-header "WAITING tasks")))
+     ("Ws" "Check SOMEDAY tasks" todo "SOMEDAY"
+      ((org-agenda-overriding-header "SOMEDAY tasks")))
+     ("Wf" "Check finished tasks" todo "DONE|CANCELLED|FORWARDED"
+      ((org-agenda-overriding-header "Finished tasks")))
+     ("WP" "Planing ToDos (unscheduled) only" todo "TODO|NEXT"
+      ((org-agenda-overriding-header "Planning overview")
+       (org-agenda-skip-function
+        (quote
+         (org-agenda-skip-entry-if
+          (quote scheduled)
+          (quote deadline)))))))))
+  (org-capture-templates
+   (quote
+    (
+     ;; Goals
+     ("G" "Define a goal" entry (file+headline "~/org/capture.org" "Capture") (file "~/org/tpl-goal.txt") :empty-lines-after 2)
+     ;; Same same, diff tag
+     ("N" "NEXT entry" entry (file+headline "~/org/capture.org" "Capture") (file "~/org/tpl-next.txt") :empty-lines-before 1)
+     ("T" "TODO entry" entry (file+headline "~/org/capture.org" "Capture") (file "~/org/tpl-todo.txt") :empty-lines-before 1)
+     ("W" "WAITING entry" entry (file+headline "~/org/capture.org" "Capture") (file "~/org/tpl-waiting.txt") :empty-lines-before 1)
+     ("S" "SOMEDAY entry" entry (file+headline "~/org/capture.org" "Capture") (file "~/org/tpl-someday.txt") :empty-lines-before 1)
+     ("P" "PROJ entry" entry (file+headline "~/org/capture.org" "Capture") (file "~/org/tpl-proj.txt") :empty-lines-before 1)
+     ;; Books
+     ("B" "Book on the to-read-list" entry (file+headline "~/org/private.org" "Books to read") (file "~/org/tpl-book.txt") :empty-lines-after 2)
+     ;; Daily
+     ("p" "Create a daily plan")
+     ("pP" "Daily plan private" plain (file+olp+datetree "~/org/plan-free.org") (file "~/org/tpl-dailyplan.txt") :immediate-finish t)
+     ("pW" "Daily plan work" plain (file+olp+datetree "~/org/plan-work.org") (file "~/org/tpl-dailyplan.txt") :immediate-finish t)
+     ;; Journal
+     ("j" "Journal entry")
+     ("jP" "Journal entry private" entry (file+olp+datetree "~/org/journal-private.org") "* %U - %^{Activity}")
+     ("jW" "Journal entry work " entry (file+olp+datetree "~/org/journal-work.org") "* %U - %^{Activity}"))))
+  :hook
+  (org-after-todo-state-change-hook . org-checklist)
   :config
+  ;; Helps to align column view
   (set-face-attribute 'org-column nil
                       :inherit 'default)
-  (push '("w" "Work") org-capture-templates)
-  (push '("wt" "Work TODO task"
-          entry
-          (file+headline "~/org/work.org" "Capture")
-          (file "~/org/templates/tpl-todo.txt"))
-        org-capture-templates)
-  (push '("p" "Private life") org-capture-templates)
-  (push '("pt" "Private TODO task"
-          entry
-          (file+headline "~/org/private.org" "Capture")
-          (file "~/org/templates/tpl-todo.txt"))
-        org-capture-templates)
-  (push '("pj" "Journal entry"
-          entry
-          (file+olp+datetree "~/org/journal.org") "* %U - %^{Activity}")
-          org-capture-templates)
-  (push '("pb" "Add book to read"
-          entry
-          (file+headline "~/org/private.org" "Books to read")
-          (file "~/org/templates/tpl-book.txt")
-          :empty-lines-after 2)
-        org-capture-templates)
   :bind
   ("\C-ca" . 'org-agenda)
   ("<f6>" . 'org-capture))
+
+;;
+(defun org-reset-checkbox-state-maybe ()
+  "Reset all checkboxes in an entry if the `RESET_CHECK_BOXES' property is set"
+  (interactive "*")
+  (if (org-entry-get (point) "RESET_CHECK_BOXES")
+      (org-reset-checkbox-state-subtree)))
+
+(defun org-checklist ()
+  (when (member org-state org-done-keywords) ;; org-state dynamically bound in org.el/org-todo
+    (org-reset-checkbox-state-maybe)))
 
 ;; Functions to help focus
 (defun herulume/org-focus-private()
@@ -542,20 +606,22 @@ Install [clangd](https://clangd.llvm.org/installation.html).
   (interactive)
   (setq org-agenda-files '("~/org/work.org")))
 
+(defun herulume/org-focus-free()
+  "Set focus on non-work things."
+  (interactive)
+  (setq org-agenda-files '("~/org/private.org")))
+
 (defun herulume/org-focus-all()
   "Set focus on all things."
   (interactive)
   (setq org-agenda-files '("~/org/work.org" "~/org/private.org")))
-#+end_src
-** Mylife headers
-Thanks to [Rainer König](https://www.udemy.com/course/getting-yourself-organized-with-org-mode)
-#+begin_src
-#+SEQ_TODO: REPEAT(r) NEXT(n@/!) TODO(t@/!) WAITING(w@/!) SOMEDAY(s@/!) PROJ(p) | DONE(d@) CANCELLED(c@)
-#+STARTUP: nologrepeat logdrawer lognotereschedule
-#+TAGS: PHONE(o) COMPUTER(c) SHOPPING(s) URGENT(u)
-#+ARCHIVE: %s_archive::
-#+COLUMNS: %58ITEM(Details) %7TODO %Effort(Estimation){:} %6CLOCKSUM(Actual)
-#+PROPERTY: Effort_ALL 0:10 0:20 0:30 1:00 2:00 4:00 6:00 8:00
+
+;; Org-bullets
+(use-package org-bullets
+    :after org
+    :hook (org-mode . org-bullets-mode)
+    :custom
+    (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
 #+end_src
 
 * Olivetii
@@ -572,6 +638,25 @@ Nice writing environment.
 
 ;; Use European date format (DD/MM/YYYY or 9 October 2024).
 (defvar calendar-date-style 'european)
+#+end_src
+
+* Elfeed
+RSS feed
+#+begin_src emacs-lisp
+(use-package elfeed
+  :ensure t
+  :custom
+  (url-queue-timeout 30)
+  (elfeed-search-filter "@1-day-ago +unread -politics"))
+
+
+(use-package elfeed-org
+  :ensure t
+  :custom
+  (rmh-elfeed-org-files (list "~/dev/TARDIS/elfeed.org"))
+  :init
+  (elfeed-org))
+
 #+end_src
 
 * Confirm to quit
@@ -592,7 +677,7 @@ Nice writing environment.
 (add-hook 'write-file-hooks 'time-stamp) ; Update when saving.
 #+end_src
 
-* Theme
+* Theme and Font
 #+begin_src emacs-lisp
 ;; Dracula theme
 (mapc #'disable-theme custom-enabled-themes)  ; Disable all active themes
@@ -600,6 +685,10 @@ Nice writing environment.
   :ensure t
   :config
   (load-theme 'dracula :noconfirm))
+
+;; Iosevka Term
+(set-face-attribute 'default nil
+                    :height 130 :weight 'normal :family "Iosevka Term")
 #+end_src
 
 * Margo
@@ -639,4 +728,29 @@ Execute Order 66
      (kill-buffer buffer))
    (buffer-list))
   (delete-other-windows))
+#+end_src
+
+* Copy Org IDs
+Credit to Rainer König.
+#+begin_src emacs-lisp
+(defun herulume/copy-idlink-to-clipboard()
+  "Copy an ID link with the headline to killring,
+if no ID is there then create a new unique ID.
+This function works only in org-mode or org-agenda buffers.
+The purpose of this function is to easily construct id:-links to
+org-mode items. If its assigned to a key it saves you marking the
+text and copying to the killring."
+       (interactive)
+       (when (eq major-mode 'org-agenda-mode) ;if we are in agenda mode we switch to orgmode
+	 (org-agenda-show)
+	 (org-agenda-goto))
+       (when (eq major-mode 'org-mode) ; do this only in org-mode buffers
+	 (setq mytmphead (nth 4 (org-heading-components)))
+         (setq mytmpid (funcall 'org-id-get-create))
+	 (setq mytmplink (format "[[id:%s][%s]]" mytmpid mytmphead))
+	 (kill-new mytmplink)
+	 (message "Copied %s to killring (clipboard)" mytmplink)
+       ))
+
+(global-set-key (kbd "<f5>") 'herulume/copy-idlink-to-clipboard)
 #+end_src
