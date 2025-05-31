@@ -1,7 +1,7 @@
 #+title: post-init
 #+PROPERTY: header-args:emacs-lisp :lexical t :tangle ./post-init.el :mkdirp yes
 
-# Time-stamp: <Last changed 2025-05-31 10:06:41>
+# Time-stamp: <Last changed 2025-05-31 18:32:05>
 
 * Header
 #+begin_src emacs-lisp
@@ -665,6 +665,12 @@ RSS feed
   :init
   (elfeed-org))
 
+#+end_src
+
+* Ruler at 80 characters
+#+begin_src emacs-lisp
+;; global-display-column-indicator-mode
+(setopt display-fill-column-indicator-column 80)
 #+end_src
 
 * Confirm to quit
