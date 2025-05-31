@@ -434,10 +434,10 @@ Install [clangd](https://clangd.llvm.org/installation.html).
 
 * Perl
 #+begin_src emacs-lisp
-(fset 'perl-mode 'cperl-mode)
-(setq cperl-invalid-face nil)
-(setq cperl-indent-parens-as-block t)
-(setq cperl-close-paren-offset (- cperl-indent-level))
+;;(fset 'perl-mode 'cperl-mode)
+;;(setq cperl-invalid-face nil)
+;;(setq cperl-indent-parens-as-block t)
+;;(setq cperl-close-paren-offset (- cperl-indent-level))
 #+end_src
 
 * Prolog
