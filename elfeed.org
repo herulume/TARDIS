@@ -1,6 +1,8 @@
 * Feeds :elfeed:
 ** News :news:
-**** https://www.rtp.pt/noticias/rss/pais :portugal:
-**** https://www.abrilabril.pt/feed :left:portugal:politics:
-**** https://www.reddit.com/r/worldnews/top/.rss?t=week :reddit:
-**** https://www.rtp.pt/noticias/rss/politica :portugal:politics:
+*** https://www.rtp.pt/noticias/rss/pais :portugal:
+*** https://www.abrilabril.pt/feed :left:portugal:politics:
+*** https://www.reddit.com/r/worldnews/top/.rss?t=week :reddit:
+*** https://www.rtp.pt/noticias/rss/politica :portugal:politics:
+** Tech :tech:
+*** https://ludic.mataroa.blog/rss/

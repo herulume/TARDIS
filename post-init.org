@@ -1,7 +1,7 @@
 #+title: post-init
 #+PROPERTY: header-args:emacs-lisp :lexical t :tangle ./post-init.el :mkdirp yes
 
-# Time-stamp: <Last changed 2025-05-31 00:03:32>
+# Time-stamp: <Last changed 2025-05-31 10:06:41>
 
 * Header
 #+begin_src emacs-lisp
@@ -430,6 +430,14 @@ Install [clangd](https://clangd.llvm.org/installation.html).
   :elpaca nil
   :hook
   (c-mode . eglot-ensure))
+#+end_src
+
+* Perl
+#+begin_src emacs-lisp
+(fset 'perl-mode 'cperl-mode)
+(setq cperl-invalid-face nil)
+(setq cperl-indent-parens-as-block t)
+(setq cperl-close-paren-offset (- cperl-indent-level))
 #+end_src
 
 * Prolog
