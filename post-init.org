@@ -1,7 +1,7 @@
 #+title: post-init
 #+PROPERTY: header-args:emacs-lisp :lexical t :tangle ./post-init.el :mkdirp yes
 
-# Time-stamp: <Last changed 2025-05-31 18:32:05>
+# Time-stamp: <Last changed 2025-06-01 13:41:13>
 
 * Header
 #+begin_src emacs-lisp
@@ -502,6 +502,11 @@ Huge thanks to Rainer König.
   (org-fontify-todo-headline t)
   (org-fontify-whole-heading-line t)
   (org-fontify-quote-and-verse-blocks t)
+  ;; Refile to another file
+  (org-refile-use-outline-path 'file)
+  (org-refile-targets
+   '(("private.org" :maxlevel . 1)
+     ("work.org" :maxlevel . 1)))
   ;; Align tags on my screen
   (org-tags-column 0)
   ;; Agends and life organisation
