@@ -1,7 +1,7 @@
 #+title: post-init
 #+PROPERTY: header-args:emacs-lisp :lexical t :tangle ./post-init.el :mkdirp yes
 
-# Time-stamp: <Last changed 2025-06-01 13:41:13>
+# Time-stamp: <Last changed 2025-06-03 16:01:12>
 
 * Header
 #+begin_src emacs-lisp
@@ -476,10 +476,13 @@ Install [clangd](https://clangd.llvm.org/installation.html).
   (setq zoom-mode t))
 #+end_src
 
-* Terminal
+* Terminal + eshell
 #+begin_src emacs-lisp
 (use-package eat
-  :ensure t)
+  :ensure t
+  :hook
+  (eshell-load-hook . eat-eshell-mode)
+  (eshell-load-hook . eat-eshell-visual-command-mode))
 #+end_src
 
 * Org
@@ -527,10 +530,12 @@ Huge thanks to Rainer König.
                   ((org-agenda-overriding-header "Urgent Tasks")))
        (tags-todo "RADAR"
                   ((org-agenda-overriding-header "On my radar")))
-       (tags-todo "PHONE+TODO=\"NEXT\""
+       (tags-todo "PHONE+TODO=\"NEXT\|PHONE+TODO=\"REPEAT\""
                   ((org-agenda-overriding-header "Phone Calls")))
        (tags-todo "Depth=\"Deep\"/NEXT"
                   ((org-agenda-overriding-header "Next Actions requiring deep work")))
+       (tags-todo "G@2025_reading+TODO=\"NEXT\""
+                  ((org-agenda-overriding-header "Current Book")))
        (agenda ""
                ((org-agenda-overriding-header "Today")
                 (org-agenda-span 1)
